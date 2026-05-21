@@ -1,0 +1,3355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blockchain & Ethereum — Complete Developer Guide</title>
+  <style>
+    /* ── RESET & ROOT ─────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #1f2937;
+      --surface3:  #243044;
+      --border:    #2d333b;
+      --accent:    #58a6ff;
+      --accent2:   #3fb950;
+      --accent3:   #f0883e;
+      --accent4:   #bc8cff;
+      --accent5:   #ff7b72;
+      --text:      #e6edf3;
+      --muted:     #7d8590;
+      --muted2:    #adbac7;
+      --code-bg:   #0d1117;
+
+      /* syntax */
+      --s-kw:   #ff7b72;
+      --s-fn:   #d2a8ff;
+      --s-str:  #a5d6ff;
+      --s-num:  #f2cc60;
+      --s-cmt:  #6e7781;
+      --s-type: #7ee787;
+      --s-op:   #79c0ff;
+      --s-var:  #e6edf3;
+      --s-key:  #79c0ff;
+
+      --sidebar-w: 260px;
+      --top-h: 56px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── TOPBAR ───────────────────────────────────────── */
+    #topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--top-h);
+      background: rgba(13,17,23,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      gap: 1.5rem;
+      z-index: 200;
+    }
+    #topbar .logo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    #topbar .subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    #topbar .progress-wrap {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    #topbar .progress-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    #progress-bar {
+      width: 120px;
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    #progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+      transition: width 0.3s;
+    }
+
+    /* ── LAYOUT ───────────────────────────────────────── */
+    #layout {
+      display: flex;
+      margin-top: var(--top-h);
+      flex: 1;
+    }
+
+    /* ── SIDEBAR ──────────────────────────────────────── */
+    #sidebar {
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      height: calc(100vh - var(--top-h));
+      position: sticky;
+      top: var(--top-h);
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+      padding: 1.25rem 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .nav-section-label {
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.75rem 1.25rem 0.3rem;
+      margin-top: 0.5rem;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.38rem 1.25rem;
+      text-decoration: none;
+      font-size: 0.82rem;
+      color: var(--muted2);
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-link:hover { color: var(--text); background: var(--surface2); }
+    .nav-link.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(88,166,255,0.07);
+    }
+    .nav-link .nav-num {
+      font-size: 0.7rem;
+      color: var(--muted);
+      min-width: 18px;
+    }
+
+    /* ── MAIN CONTENT ─────────────────────────────────── */
+    #main {
+      flex: 1;
+      min-width: 0;
+      padding: 2.5rem 3rem;
+      max-width: 900px;
+    }
+
+    /* ── SECTIONS ─────────────────────────────────────── */
+    .section {
+      margin-bottom: 5rem;
+      scroll-margin-top: calc(var(--top-h) + 1.5rem);
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    h1.section-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+    h2.section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 2rem 0 0.6rem;
+    }
+    h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted2);
+      margin: 1.25rem 0 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 3rem 0;
+    }
+
+    p { color: var(--muted2); margin-bottom: 0.85rem; font-size: 0.95rem; }
+    p strong { color: var(--text); }
+    p code, li code {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      font-size: 0.82em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: var(--accent3);
+    }
+
+    ul, ol { padding-left: 1.5rem; margin-bottom: 0.85rem; }
+    li { color: var(--muted2); font-size: 0.95rem; margin-bottom: 0.3rem; }
+    li strong { color: var(--text); }
+
+    /* ── CARDS GRID ───────────────────────────────────── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: var(--accent); }
+    .card .card-icon { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .card .card-title { font-weight: 600; font-size: 0.88rem; color: var(--text); margin-bottom: 0.35rem; }
+    .card p { font-size: 0.82rem; margin: 0; }
+
+    /* ── CALLOUT BOXES ────────────────────────────────── */
+    .callout {
+      display: flex;
+      gap: 0.75rem;
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      margin: 1.25rem 0;
+      font-size: 0.88rem;
+      border: 1px solid;
+    }
+    .callout .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .callout-body { color: var(--muted2); }
+    .callout-body strong { color: var(--text); display: block; margin-bottom: 0.2rem; }
+    .callout.info    { background: rgba(88,166,255,0.06);  border-color: rgba(88,166,255,0.25); }
+    .callout.tip     { background: rgba(63,185,80,0.06);   border-color: rgba(63,185,80,0.25); }
+    .callout.warn    { background: rgba(240,136,62,0.06);  border-color: rgba(240,136,62,0.25); }
+    .callout.danger  { background: rgba(255,123,114,0.06); border-color: rgba(255,123,114,0.25); }
+
+    /* ── STEP LIST ────────────────────────────────────── */
+    .steps { display: flex; flex-direction: column; gap: 0; margin: 1.25rem 0; }
+    .step {
+      display: flex;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-left: 2px solid var(--border);
+      padding-left: 1.25rem;
+      margin-left: 0.75rem;
+      position: relative;
+    }
+    .step::before {
+      content: attr(data-n);
+      position: absolute;
+      left: -1rem;
+      top: 0.85rem;
+      width: 1.85rem;
+      height: 1.85rem;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step:last-child { border-left-color: transparent; }
+    .step-body { padding-top: 0.05rem; }
+    .step-body strong { color: var(--text); font-size: 0.9rem; display: block; margin-bottom: 0.2rem; }
+    .step-body p { margin: 0; font-size: 0.85rem; }
+
+    /* ── TABLE ────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; margin: 1.25rem 0; border-radius: 8px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+      text-align: left;
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted2); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface); }
+    td strong { color: var(--text); }
+    td code {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+      font-size: 0.8em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: var(--accent3);
+    }
+
+    /* ── CODE BLOCKS ──────────────────────────────────── */
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 1.1rem 0;
+      overflow: hidden;
+    }
+    .code-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .code-dots { display: flex; gap: 5px; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .code-lang {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: 'Consolas', monospace;
+      font-weight: 600;
+      flex: 1;
+    }
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.7rem;
+      padding: 0.18rem 0.55rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .copy-btn:hover { background: var(--surface2); color: var(--text); }
+    pre {
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      tab-size: 2;
+    }
+    code { font-family: inherit; }
+
+    /* syntax highlight */
+    .kw  { color: var(--s-kw);   font-weight: 600; }
+    .fn  { color: var(--s-fn); }
+    .str { color: var(--s-str); }
+    .num { color: var(--s-num); }
+    .cmt { color: var(--s-cmt); font-style: italic; }
+    .ty  { color: var(--s-type); }
+    .op  { color: var(--s-op); }
+    .key { color: var(--s-key); }
+
+    /* ── FLOW ─────────────────────────────────────────── */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .flow-node {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.82rem;
+      color: var(--text);
+      white-space: nowrap;
+      text-align: center;
+    }
+    .flow-node small { display: block; font-size: 0.7rem; color: var(--muted); }
+    .flow-arrow { color: var(--accent); font-size: 1.1rem; }
+
+    /* ── TERMINAL BLOCK ───────────────────────────────── */
+    .terminal {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      margin: 1.1rem 0;
+      overflow: hidden;
+    }
+    .terminal-header {
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .terminal-title { font-size: 0.72rem; color: var(--muted); font-family: monospace; flex: 1; }
+    .terminal pre {
+      color: #7ee787;
+      padding: 1rem 1.25rem;
+    }
+    .terminal .prompt { color: var(--muted); }
+    .terminal .cmd    { color: #e6edf3; }
+    .terminal .out    { color: #7ee787; }
+    .terminal .err    { color: #ff7b72; }
+    .terminal .comment { color: #6e7781; }
+
+    /* ── MINI BADGE ───────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 0.12rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .badge-blue   { background: rgba(88,166,255,0.15);  color: var(--accent); }
+    .badge-green  { background: rgba(63,185,80,0.15);   color: var(--accent2); }
+    .badge-orange { background: rgba(240,136,62,0.15);  color: var(--accent3); }
+    .badge-purple { background: rgba(188,140,255,0.15); color: var(--accent4); }
+    .badge-red    { background: rgba(255,123,114,0.15); color: var(--accent5); }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      #main { padding: 1.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════ TOPBAR ════════════════════════════════════════ -->
+<header id="topbar">
+  <div class="logo">&#9646;&#9646; BlockchainDev</div>
+  <div class="subtitle">Complete Developer Guide</div>
+  <div class="progress-wrap">
+    <span class="progress-label">Progress</span>
+    <div id="progress-bar"><div id="progress-fill"></div></div>
+  </div>
+</header>
+
+<!-- ════ LAYOUT ════════════════════════════════════════ -->
+<div id="layout">
+
+  <!-- ── SIDEBAR ──────────────────────────────────────── -->
+  <nav id="sidebar">
+    <div class="nav-section-label">Getting Started</div>
+    <a class="nav-link" href="#s0"><span class="nav-num">00</span> Prerequisites</a>
+
+    <div class="nav-section-label">Blockchain</div>
+    <a class="nav-link" href="#s1"><span class="nav-num">01</span> What is a Blockchain?</a>
+    <a class="nav-link" href="#s2"><span class="nav-num">02</span> Cryptographic Hashing</a>
+    <a class="nav-link" href="#s3"><span class="nav-num">03</span> Blocks &amp; Chains</a>
+    <a class="nav-link" href="#s4"><span class="nav-num">04</span> Consensus Mechanisms</a>
+    <a class="nav-link" href="#s5"><span class="nav-num">05</span> Build a Blockchain (JS)</a>
+
+    <div class="nav-section-label">Ethereum</div>
+    <a class="nav-link" href="#s6"><span class="nav-num">06</span> Ethereum Architecture</a>
+    <a class="nav-link" href="#s7"><span class="nav-num">07</span> Accounts &amp; Wallets</a>
+    <a class="nav-link" href="#s8"><span class="nav-num">08</span> Transactions &amp; Gas</a>
+
+    <div class="nav-section-label">Node.js Project</div>
+    <a class="nav-link" href="#s9"><span class="nav-num">09</span> Project Setup (Hardhat)</a>
+    <a class="nav-link" href="#s10"><span class="nav-num">10</span> Folder Structure</a>
+
+    <div class="nav-section-label">Solidity</div>
+    <a class="nav-link" href="#s11"><span class="nav-num">11</span> Data Types &amp; Variables</a>
+    <a class="nav-link" href="#s12"><span class="nav-num">12</span> Functions &amp; Modifiers</a>
+    <a class="nav-link" href="#s13"><span class="nav-num">13</span> Events &amp; Errors</a>
+    <a class="nav-link" href="#s14"><span class="nav-num">14</span> Inheritance &amp; Interfaces</a>
+
+    <div class="nav-section-label">Smart Contracts</div>
+    <a class="nav-link" href="#s15"><span class="nav-num">15</span> Counter &amp; Storage</a>
+    <a class="nav-link" href="#s16"><span class="nav-num">16</span> Simple Bank</a>
+    <a class="nav-link" href="#s17"><span class="nav-num">17</span> ERC-20 Token</a>
+    <a class="nav-link" href="#s18"><span class="nav-num">18</span> ERC-721 NFT</a>
+    <a class="nav-link" href="#s19"><span class="nav-num">19</span> Voting System</a>
+
+    <div class="nav-section-label">Node.js + ethers.js</div>
+    <a class="nav-link" href="#s20"><span class="nav-num">20</span> Provider &amp; Signer</a>
+    <a class="nav-link" href="#s21"><span class="nav-num">21</span> Read &amp; Write Contract</a>
+    <a class="nav-link" href="#s22"><span class="nav-num">22</span> Events &amp; Filters</a>
+
+    <div class="nav-section-label">Testing &amp; Deploy</div>
+    <a class="nav-link" href="#s23"><span class="nav-num">23</span> Writing Tests</a>
+    <a class="nav-link" href="#s24"><span class="nav-num">24</span> Deploy to Testnet</a>
+    <a class="nav-link" href="#s25"><span class="nav-num">25</span> Security Best Practices</a>
+  </nav>
+
+  <!-- ── MAIN ─────────────────────────────────────────── -->
+  <main id="main">
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 0 — PREREQUISITES                        -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s0">
+      <div class="section-badge">&#128218; Getting Started</div>
+      <h1 class="section-title">Prerequisites &amp; Setup</h1>
+      <p>Before writing a single line of Solidity, make sure you have the right tools installed. This guide uses <strong>Node.js</strong>, <strong>npm</strong>, and <strong>Hardhat</strong> as the development environment.</p>
+
+      <h3>What you need to know first</h3>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">&#128187;</div>
+          <div class="card-title">JavaScript / Node.js</div>
+          <p>All scripts, tests, and tooling in this guide are written in JavaScript. Async/await and promises are used heavily.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128279;</div>
+          <div class="card-title">Command Line</div>
+          <p>You should be comfortable running commands in a terminal (bash, zsh, or PowerShell).</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128218;</div>
+          <div class="card-title">Basic Cryptography</div>
+          <p>Helpful but not required — we cover hashing and key pairs from scratch in the early sections.</p>
+        </div>
+      </div>
+
+      <h3>Step-by-step: Install everything</h3>
+      <div class="steps">
+        <div class="step" data-n="1">
+          <div class="step-body">
+            <strong>Install Node.js (v18 or later)</strong>
+            <p>Download from <code>nodejs.org</code> or use a version manager like <code>nvm</code>. Verify with:</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <pre><span class="comment"># Check versions</span>
+<span class="prompt">$ </span><span class="cmd">node --version</span>
+<span class="out">v20.11.0</span>
+
+<span class="prompt">$ </span><span class="cmd">npm --version</span>
+<span class="out">10.2.4</span>
+
+<span class="comment"># Optional: install nvm to manage Node versions</span>
+<span class="prompt">$ </span><span class="cmd">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash</span>
+<span class="prompt">$ </span><span class="cmd">nvm install 20</span>
+<span class="prompt">$ </span><span class="cmd">nvm use 20</span></pre>
+      </div>
+
+      <div class="steps">
+        <div class="step" data-n="2">
+          <div class="step-body">
+            <strong>Create the project folder</strong>
+            <p>We'll build everything inside a single folder throughout this guide.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <pre><span class="prompt">$ </span><span class="cmd">mkdir blockchain-dev && cd blockchain-dev</span>
+<span class="prompt">$ </span><span class="cmd">npm init -y</span>
+<span class="out">Wrote to /blockchain-dev/package.json</span></pre>
+      </div>
+
+      <div class="steps">
+        <div class="step" data-n="3">
+          <div class="step-body">
+            <strong>Install Hardhat and tooling</strong>
+            <p>Hardhat is the development environment for Ethereum — it gives you a local blockchain, compiler, testing framework, and deployment pipeline in one package.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <pre><span class="prompt">$ </span><span class="cmd">npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox</span>
+<span class="prompt">$ </span><span class="cmd">npm install ethers dotenv</span>
+<span class="prompt">$ </span><span class="cmd">npm install --save-dev @openzeppelin/contracts</span>
+
+<span class="comment"># Initialize Hardhat — choose "Create a JavaScript project"</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat init</span>
+<span class="out">888    888                      888 888               888
+888    888                      888 888               888
+888    888                      888 888               888
+8888888888  8888b.  888d888 .d88888 88888b.   8888b.  888888
+888    888     "88b 888P"  d88" 888 888 "88b     "88b 888
+888    888 .d888888 888    888  888 888  888 .d888888 888
+888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.
+888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888
+
+? What do you want to do? › Create a JavaScript project</span></pre>
+      </div>
+
+      <div class="steps">
+        <div class="step" data-n="4">
+          <div class="step-body">
+            <strong>Create a <code>.env</code> file for secrets</strong>
+            <p>Never hardcode private keys or API keys. Store them in <code>.env</code> and add it to <code>.gitignore</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">.env</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt"># Wallet private key (never commit this!)</span>
+PRIVATE_KEY=0xabc123...yourprivatekey
+
+<span class="cmt"># RPC endpoints (get from Alchemy or Infura — free tier)</span>
+SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
+
+<span class="cmt"># For verifying contracts on Etherscan</span>
+ETHERSCAN_API_KEY=YOURAPIKEY</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">.gitignore</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>node_modules/
+.env
+artifacts/
+cache/
+typechain-types/</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>Get a free RPC endpoint</strong>
+          Sign up at <strong>Alchemy</strong> (alchemy.com) or <strong>Infura</strong> (infura.io) — both offer free tiers that are more than enough for development and testnet work.
+        </div>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">&#128196;</div>
+        <div class="callout-body">
+          <strong>Recommended editor</strong>
+          Use <strong>VS Code</strong> with the <strong>Hardhat Solidity</strong> extension (by Nomic Foundation) for syntax highlighting, inline errors, and code completion in <code>.sol</code> files.
+        </div>
+      </div>
+    </section>
+    <!-- END SECTION 0 -->
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 1 — WHAT IS A BLOCKCHAIN?               -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s1">
+      <div class="section-badge">&#9636; Blockchain Basics</div>
+      <h2 class="section-title">01 — What is a Blockchain?</h2>
+      <p>A <strong>blockchain</strong> is a continuously growing list of records (called <em>blocks</em>), linked and secured using cryptography. Unlike a traditional database controlled by one company, a blockchain is replicated across thousands of computers worldwide — no single party owns or controls it.</p>
+
+      <h3>The core problem it solves</h3>
+      <p>Before blockchain, sending digital value (money, ownership) required trusting a <strong>central authority</strong> (a bank, PayPal, a government) to keep the ledger honest. Blockchain replaces that trust with <strong>math and code</strong>.</p>
+
+      <div class="callout info">
+        <div class="callout-icon">&#9432;</div>
+        <div class="callout-body">
+          <strong>The Double-Spend Problem</strong>
+          Digital files can be copied infinitely. If I send you a digital dollar, what stops me from sending the same dollar to someone else? Blockchain solves this without a central authority by making the ledger public, append-only, and agreed upon by consensus.
+        </div>
+      </div>
+
+      <h3>Four key properties</h3>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">&#128279;</div>
+          <div class="card-title">Linked Blocks</div>
+          <p>Each block contains the <strong>hash of the previous block</strong>, forming an unbreakable chain. Change one block and every block after it becomes invalid.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#127760;</div>
+          <div class="card-title">Distributed</div>
+          <p>Thousands of <strong>nodes</strong> each hold a complete copy. There is no server to hack, no company to shut down.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128274;</div>
+          <div class="card-title">Immutable</div>
+          <p>Once a block is confirmed by the network, its data <strong>cannot be changed</strong> without redoing all the cryptographic work for every subsequent block.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128202;</div>
+          <div class="card-title">Transparent</div>
+          <p>Anyone can read the entire history. All transactions are <strong>publicly verifiable</strong> yet pseudonymous (identified by addresses, not names).</p>
+        </div>
+      </div>
+
+      <h3>Blockchain vs Traditional Database</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feature</th><th>Traditional DB</th><th>Blockchain</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Control</strong></td><td>Centralized (one owner)</td><td>Decentralized (no owner)</td></tr>
+            <tr><td><strong>Trust</strong></td><td>Trust the company</td><td>Trust the math</td></tr>
+            <tr><td><strong>Modification</strong></td><td>Records can be updated or deleted</td><td>Append-only, immutable</td></tr>
+            <tr><td><strong>Speed</strong></td><td>Thousands of tx/sec</td><td>Tens to thousands tx/sec (varies)</td></tr>
+            <tr><td><strong>Transparency</strong></td><td>Private (controlled access)</td><td>Public (anyone can audit)</td></tr>
+            <tr><td><strong>Failure point</strong></td><td>Single server / data center</td><td>Must take down thousands of nodes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>How data flows — from transaction to block</h3>
+      <div class="flow">
+        <div class="flow-node">User signs<br/><small>transaction</small></div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-node">Broadcast to<br/><small>P2P network</small></div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-node">Mempool<br/><small>waiting room</small></div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-node">Validator picks<br/><small>&amp; forms block</small></div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-node">Block confirmed<br/><small>by consensus</small></div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-node">Added to<br/><small>chain forever</small></div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 2 — CRYPTOGRAPHIC HASHING               -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s2">
+      <div class="section-badge">&#128272; Cryptography</div>
+      <h2 class="section-title">02 — Cryptographic Hashing</h2>
+      <p>A <strong>hash function</strong> takes any input (a word, a file, a transaction) and produces a fixed-length string of characters. It is the foundation of blockchain security.</p>
+
+      <h3>Properties of a cryptographic hash</h3>
+      <ul>
+        <li><strong>Deterministic</strong> — the same input always produces the same output.</li>
+        <li><strong>One-way</strong> — you cannot reverse the hash back to the original input.</li>
+        <li><strong>Avalanche effect</strong> — changing one character of the input completely changes the output.</li>
+        <li><strong>Collision-resistant</strong> — practically impossible to find two different inputs that produce the same hash.</li>
+        <li><strong>Fixed-length output</strong> — SHA-256 always produces 64 hex characters (256 bits), regardless of input size.</li>
+      </ul>
+
+      <div class="callout tip">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>Ethereum uses Keccak-256</strong>, which is a variant of SHA-3. Node.js's built-in <code>crypto</code> module provides SHA-256. The <code>ethers.js</code> library exposes <code>ethers.keccak256()</code> for Ethereum-compatible hashing.
+        </div>
+      </div>
+
+      <h3>Hashing in Node.js — see it yourself</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">hash-demo.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+
+<span class="kw">function</span> <span class="fn">sha256</span>(input) {
+  <span class="kw">return</span> crypto.<span class="fn">createHash</span>(<span class="str">'sha256'</span>)
+               .<span class="fn">update</span>(input)
+               .<span class="fn">digest</span>(<span class="str">'hex'</span>);
+}
+
+<span class="cmt">// Same input → always the same hash</span>
+console.<span class="fn">log</span>(<span class="fn">sha256</span>(<span class="str">'Hello'</span>));
+<span class="cmt">// 185f8db32921bd46d35fa8afe17f74c51f1c5f2c6d4e3a5b5b9e0b7f5f3c2d1</span>
+
+<span class="cmt">// One character change → completely different hash (avalanche effect)</span>
+console.<span class="fn">log</span>(<span class="fn">sha256</span>(<span class="str">'hello'</span>));
+<span class="cmt">// 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824</span>
+
+<span class="cmt">// Any size input → fixed 64-char output</span>
+console.<span class="fn">log</span>(<span class="fn">sha256</span>(<span class="str">'The entire text of War and Peace...'</span>));
+<span class="cmt">// always exactly 64 hex characters</span>
+
+<span class="cmt">// Ethereum-style hashing with ethers.js</span>
+<span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+
+<span class="kw">const</span> data = ethers.<span class="fn">toUtf8Bytes</span>(<span class="str">'Hello Ethereum'</span>);
+console.<span class="fn">log</span>(<span class="str">'keccak256:'</span>, ethers.<span class="fn">keccak256</span>(data));
+<span class="cmt">// 0x3ea2f1d0abf3fc66cf29eebb70cbdc57f21f...  (Ethereum uses keccak-256)</span></code></pre>
+      </div>
+
+      <h3>Merkle Trees — hashing at scale</h3>
+      <p>A <strong>Merkle tree</strong> is a binary tree of hashes. Each leaf is a transaction hash; each parent node is the hash of its two children. The single root hash (the <strong>Merkle root</strong>) summarizes <em>every transaction in the block</em> in 32 bytes.</p>
+
+      <div class="flow" style="flex-direction:column; align-items:flex-start; gap: 0.75rem;">
+        <div style="display:flex; gap:0.5rem; margin-left: 7rem;">
+          <div class="flow-node" style="background:rgba(88,166,255,0.15); border-color: var(--accent);">Root Hash<br/><small>H(H12 + H34)</small></div>
+        </div>
+        <div style="display:flex; gap:1.5rem; margin-left:3.5rem;">
+          <div class="flow-node">H12<br/><small>H(H1 + H2)</small></div>
+          <div class="flow-node">H34<br/><small>H(H3 + H4)</small></div>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <div class="flow-node">H1<br/><small>hash(Tx1)</small></div>
+          <div class="flow-node">H2<br/><small>hash(Tx2)</small></div>
+          <div class="flow-node">H3<br/><small>hash(Tx3)</small></div>
+          <div class="flow-node">H4<br/><small>hash(Tx4)</small></div>
+        </div>
+      </div>
+
+      <p style="margin-top:0.75rem">If any transaction is tampered with, its leaf hash changes, which changes all parent hashes up to the root — making tampering immediately detectable.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">merkle-tree.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+
+<span class="kw">function</span> <span class="fn">hash</span>(data) {
+  <span class="kw">return</span> crypto.<span class="fn">createHash</span>(<span class="str">'sha256'</span>).<span class="fn">update</span>(data).<span class="fn">digest</span>(<span class="str">'hex'</span>);
+}
+
+<span class="kw">function</span> <span class="fn">buildMerkleRoot</span>(transactions) {
+  <span class="kw">if</span> (transactions.length === <span class="num">0</span>) <span class="kw">return</span> <span class="fn">hash</span>(<span class="str">''</span>);
+
+  <span class="cmt">// Hash each transaction</span>
+  <span class="kw">let</span> layer = transactions.<span class="fn">map</span>(tx => <span class="fn">hash</span>(JSON.<span class="fn">stringify</span>(tx)));
+
+  <span class="cmt">// Combine pairs until only one hash remains</span>
+  <span class="kw">while</span> (layer.length > <span class="num">1</span>) {
+    <span class="kw">if</span> (layer.length % <span class="num">2</span> !== <span class="num">0</span>) {
+      layer.<span class="fn">push</span>(layer[layer.length - <span class="num">1</span>]); <span class="cmt">// duplicate last if odd</span>
+    }
+    <span class="kw">const</span> nextLayer = [];
+    <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < layer.length; i += <span class="num">2</span>) {
+      nextLayer.<span class="fn">push</span>(<span class="fn">hash</span>(layer[i] + layer[i + <span class="num">1</span>]));
+    }
+    layer = nextLayer;
+  }
+  <span class="kw">return</span> layer[<span class="num">0</span>]; <span class="cmt">// the Merkle root</span>
+}
+
+<span class="kw">const</span> transactions = [
+  { from: <span class="str">'Alice'</span>, to: <span class="str">'Bob'</span>,   amount: <span class="num">10</span> },
+  { from: <span class="str">'Bob'</span>,   to: <span class="str">'Carol'</span>, amount: <span class="num">5</span>  },
+  { from: <span class="str">'Carol'</span>, to: <span class="str">'Dave'</span>,  amount: <span class="num">3</span>  },
+  { from: <span class="str">'Dave'</span>,  to: <span class="str">'Alice'</span>, amount: <span class="num">1</span>  },
+];
+
+console.<span class="fn">log</span>(<span class="str">'Merkle Root:'</span>, <span class="fn">buildMerkleRoot</span>(transactions));
+<span class="cmt">// Change any transaction and the root completely changes</span></code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 3 — BLOCKS & CHAINS                      -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s3">
+      <div class="section-badge">&#127973; Structure</div>
+      <h2 class="section-title">03 — Blocks &amp; the Chain</h2>
+      <p>A <strong>block</strong> is a data structure that packages transactions together. The <strong>chain</strong> is formed by each block containing the hash of the previous one — creating a dependency that makes the history tamper-proof.</p>
+
+      <h3>Anatomy of a block</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><strong>index</strong></td><td><code>number</code></td><td>Position in the chain (0 = Genesis)</td></tr>
+            <tr><td><strong>timestamp</strong></td><td><code>string</code></td><td>When the block was created</td></tr>
+            <tr><td><strong>transactions</strong></td><td><code>array</code></td><td>The actual data (money transfers, contract calls)</td></tr>
+            <tr><td><strong>previousHash</strong></td><td><code>hex string</code></td><td>Hash of the prior block — forms the chain link</td></tr>
+            <tr><td><strong>merkleRoot</strong></td><td><code>hex string</code></td><td>Root hash of all transactions in this block</td></tr>
+            <tr><td><strong>nonce</strong></td><td><code>number</code></td><td>Number miners increment to solve Proof-of-Work</td></tr>
+            <tr><td><strong>hash</strong></td><td><code>hex string</code></td><td>SHA-256 of all above fields combined</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Why <code>previousHash</code> makes history immutable</h3>
+      <p>Imagine you have blocks A → B → C. If you try to alter a transaction in block A:</p>
+      <ol>
+        <li>Block A's hash changes.</li>
+        <li>Block B stored the old hash of A — it's now invalid.</li>
+        <li>Block B must be re-mined, changing B's hash.</li>
+        <li>Block C is now also invalid, and must be re-mined.</li>
+        <li>On a live network with thousands of blocks, this is computationally infeasible.</li>
+      </ol>
+
+      <div class="callout warn">
+        <div class="callout-icon">&#9888;</div>
+        <div class="callout-body">
+          <strong>The 51% Attack</strong>
+          An attacker who controls more than 50% of the network's mining/staking power <em>could</em> rewrite recent history. This is why large networks (Bitcoin, Ethereum) are considered secure — the cost to achieve 51% far exceeds the benefit.
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 4 — CONSENSUS MECHANISMS                 -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s4">
+      <div class="section-badge">&#9878; Consensus</div>
+      <h2 class="section-title">04 — Consensus Mechanisms</h2>
+      <p>A <strong>consensus mechanism</strong> is the set of rules that lets thousands of nodes — who don't trust each other — agree on one valid version of the blockchain.</p>
+
+      <h3>Proof of Work (PoW)</h3>
+      <p>Used by Bitcoin. Miners compete to find a <code>nonce</code> value that, when included in the block hash, produces a hash starting with a certain number of zeros (the <strong>difficulty target</strong>). This is computationally expensive — the "work" proves you spent real energy.</p>
+      <ul>
+        <li><strong>Pro:</strong> Extremely battle-tested, very secure.</li>
+        <li><strong>Con:</strong> Wastes enormous amounts of energy.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">proof-of-work.js — mining simulation</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+
+<span class="kw">function</span> <span class="fn">mineBlock</span>(data, difficulty) {
+  <span class="kw">const</span> target = <span class="str">'0'</span>.<span class="fn">repeat</span>(difficulty); <span class="cmt">// e.g. "0000"</span>
+  <span class="kw">let</span> nonce = <span class="num">0</span>;
+  <span class="kw">let</span> hash  = <span class="str">''</span>;
+
+  <span class="kw">const</span> start = Date.<span class="fn">now</span>();
+
+  <span class="kw">do</span> {
+    nonce++;
+    hash = crypto
+      .<span class="fn">createHash</span>(<span class="str">'sha256'</span>)
+      .<span class="fn">update</span>(data + nonce)
+      .<span class="fn">digest</span>(<span class="str">'hex'</span>);
+  } <span class="kw">while</span> (!hash.<span class="fn">startsWith</span>(target));
+
+  console.<span class="fn">log</span>(<span class="str">`Difficulty: <span class="op">${</span>difficulty<span class="op">}</span> | Nonce: <span class="op">${</span>nonce<span class="op">}</span> | Time: <span class="op">${</span>Date.<span class="fn">now</span>() - start<span class="op">}</span>ms`</span>);
+  console.<span class="fn">log</span>(<span class="str">`Hash: <span class="op">${</span>hash<span class="op">}</span>`</span>);
+}
+
+<span class="fn">mineBlock</span>(<span class="str">'Block data'</span>, <span class="num">2</span>); <span class="cmt">// fast (milliseconds)</span>
+<span class="fn">mineBlock</span>(<span class="str">'Block data'</span>, <span class="num">4</span>); <span class="cmt">// slower (seconds)</span>
+<span class="fn">mineBlock</span>(<span class="str">'Block data'</span>, <span class="num">5</span>); <span class="cmt">// much slower — this is why energy is used!</span></code></pre>
+      </div>
+
+      <h3>Proof of Stake (PoS)</h3>
+      <p>Used by <strong>Ethereum</strong> (since "The Merge" in Sep 2022). Instead of spending energy, validators lock up (<em>stake</em>) ETH as collateral. They are randomly chosen (weighted by stake) to propose and vote on blocks. Dishonest behavior results in <strong>slashing</strong> — losing part of their stake.</p>
+      <ul>
+        <li><strong>Pro:</strong> ~99.95% less energy than PoW. Economically punishes attackers.</li>
+        <li><strong>Con:</strong> Newer, slightly less battle-tested than PoW.</li>
+      </ul>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>Proof of Work</th><th>Proof of Stake</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Who validates</strong></td><td>Miners (GPU/ASIC hardware)</td><td>Validators (32 ETH staked)</td></tr>
+            <tr><td><strong>Energy use</strong></td><td>Very high</td><td>Very low</td></tr>
+            <tr><td><strong>Security cost</strong></td><td>Buy hardware + pay electricity</td><td>Buy &amp; lock up ETH</td></tr>
+            <tr><td><strong>Block time</strong></td><td>~10 min (Bitcoin)</td><td>~12 sec (Ethereum)</td></tr>
+            <tr><td><strong>Used by</strong></td><td>Bitcoin</td><td>Ethereum, Solana, Cardano</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">proof-of-stake.js — validator selection &amp; slashing simulation</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+
+<span class="cmt">// Each validator has a name and a stake (ETH locked as collateral).
+// More stake = larger share of totalStake = higher selection chance.
+// On Ethereum mainnet the minimum is 32 ETH per validator.</span>
+<span class="kw">class</span> <span class="fn">Validator</span> {
+  <span class="fn">constructor</span>(name, stake) {
+    <span class="kw">this</span>.name  = name;
+    <span class="kw">this</span>.stake = stake;
+  }
+}
+
+<span class="cmt">// Weighted random selection — how it works:
+//
+// Imagine a number line from 0 to totalStake (600 ETH here):
+//
+//  |&lt;─── Alice 320 ───&gt;|&lt;── Bob 160 ──&gt;|&lt; Charlie 64 &gt;|&lt; Dave 56 &gt;|
+//  0                 320             480            544           600
+//
+// We pick a random point on that line (pick = Math.random() * 600).
+// Then walk through validators, subtracting each one's stake from pick.
+// The first validator that pushes pick to ≤ 0 owns that point → winner.
+//
+// Example: pick = 250 → 250 − 320 (Alice) = −70 ≤ 0 → Alice wins
+// Example: pick = 400 → 400 − 320 = 80 &gt; 0 → 80 − 160 (Bob) = −80 ≤ 0 → Bob wins</span>
+<span class="kw">function</span> <span class="fn">selectValidator</span>(validators) {
+  <span class="cmt">// Sum all staked ETH → defines the total "number line" length</span>
+  <span class="kw">const</span> totalStake = validators.<span class="fn">reduce</span>((sum, v) =&gt; sum + v.stake, <span class="num">0</span>);
+
+  <span class="cmt">// Pick a random point anywhere in [0, totalStake)</span>
+  <span class="kw">let</span> pick = Math.<span class="fn">random</span>() * totalStake;
+
+  <span class="kw">for</span> (<span class="kw">const</span> validator <span class="kw">of</span> validators) {
+    pick -= validator.stake; <span class="cmt">// move through this validator's segment</span>
+    <span class="kw">if</span> (pick &lt;= <span class="num">0</span>) <span class="kw">return</span> validator; <span class="cmt">// random point landed in this segment</span>
+  }
+}
+
+<span class="cmt">// Simulates hashing the block header.
+// Real Ethereum hashes dozens of fields (parent hash, state root, timestamp…).
+// Here we just hash name + slot data to get a unique hex string per slot.</span>
+<span class="kw">function</span> <span class="fn">createBlockHash</span>(validatorName, data, slot) {
+  <span class="kw">return</span> crypto
+    .<span class="fn">createHash</span>(<span class="str">'sha256'</span>)
+    .<span class="fn">update</span>(validatorName + data + slot)
+    .<span class="fn">digest</span>(<span class="str">'hex'</span>);
+}
+
+<span class="cmt">// Simulates one epoch: runs N slots and prints who proposed each block.
+// Real Ethereum epoch = 32 slots × 12 sec ≈ 6.4 minutes.
+// Win-share should roughly match stake-share over many epochs.</span>
+<span class="kw">function</span> <span class="fn">runEpoch</span>(validators, blocks = <span class="num">6</span>) {
+  console.<span class="fn">log</span>(<span class="str">'=== Validators ==='</span>);
+  validators.<span class="fn">forEach</span>(v =&gt; console.<span class="fn">log</span>(<span class="str">`  <span class="op">${</span>v.name<span class="op">}</span>: <span class="op">${</span>v.stake<span class="op">}</span> ETH staked`</span>));
+  console.<span class="fn">log</span>(<span class="str">''</span>);
+
+  <span class="cmt">// Scoreboard: count how many blocks each validator proposes</span>
+  <span class="kw">const</span> winCount = {};
+  validators.<span class="fn">forEach</span>(v =&gt; (winCount[v.name] = <span class="num">0</span>));
+
+  <span class="kw">for</span> (<span class="kw">let</span> slot = <span class="num">1</span>; slot &lt;= blocks; slot++) {
+    <span class="kw">const</span> proposer = <span class="fn">selectValidator</span>(validators); <span class="cmt">// protocol picks a proposer</span>
+    <span class="kw">const</span> hash = <span class="fn">createBlockHash</span>(proposer.name, <span class="str">`slot-<span class="op">${</span>slot<span class="op">}</span>-data`</span>, slot);
+    winCount[proposer.name]++;
+    console.<span class="fn">log</span>(<span class="str">`Slot <span class="op">${</span>slot<span class="op">}</span> | Proposer: <span class="op">${</span>proposer.name.<span class="fn">padEnd</span>(<span class="num">8</span>)<span class="op">}</span> | Hash: <span class="op">${</span>hash.<span class="fn">slice</span>(<span class="num">0</span>, <span class="num">20</span>)<span class="op">}</span>...`</span>);
+  }
+
+  <span class="cmt">// Compare win% vs stake% — they should roughly match across many runs</span>
+  console.<span class="fn">log</span>(<span class="str">'\n=== Blocks proposed per validator ==='</span>);
+  validators.<span class="fn">forEach</span>(v =&gt; {
+    <span class="kw">const</span> share = ((winCount[v.name] / blocks) * <span class="num">100</span>).<span class="fn">toFixed</span>(<span class="num">0</span>);
+    console.<span class="fn">log</span>(<span class="str">`  <span class="op">${</span>v.name<span class="op">}</span>: <span class="op">${</span>winCount[v.name]<span class="op">}</span>/<span class="op">${</span>blocks<span class="op">}</span> blocks (~<span class="op">${</span>share<span class="op">}</span>%) — staked <span class="op">${</span>v.stake<span class="op">}</span> ETH`</span>);
+  });
+}
+
+<span class="cmt">// Slashing — the economic punishment for provably dishonest behavior.
+// Common offences: equivocation (signing two blocks for the same slot),
+// or surround voting (contradictory attestations).
+// The burned ETH is removed from supply — not awarded to anyone.
+// This makes attacking the network economically irrational.</span>
+<span class="kw">function</span> <span class="fn">slash</span>(validator, percent = <span class="num">10</span>) {
+  <span class="kw">const</span> penalty = (validator.stake * percent) / <span class="num">100</span>;
+  validator.stake -= penalty; <span class="cmt">// permanent — lowers future selection odds too</span>
+  console.<span class="fn">log</span>(<span class="str">`\n[SLASH] <span class="op">${</span>validator.name<span class="op">}</span> penalized <span class="op">${</span>percent<span class="op">}</span>% — lost <span class="op">${</span>penalty<span class="op">}</span> ETH, remaining: <span class="op">${</span>validator.stake<span class="op">}</span> ETH`</span>);
+}
+
+<span class="cmt">// Total stake = 320 + 160 + 64 + 56 = 600 ETH
+// Expected selection share (stake / 600):
+//   Alice 53% · Bob 27% · Charlie 11% · Dave 9%</span>
+<span class="kw">const</span> validators = [
+  <span class="kw">new</span> <span class="fn">Validator</span>(<span class="str">'Alice'</span>,   <span class="num">320</span>),
+  <span class="kw">new</span> <span class="fn">Validator</span>(<span class="str">'Bob'</span>,     <span class="num">160</span>),
+  <span class="kw">new</span> <span class="fn">Validator</span>(<span class="str">'Charlie'</span>,  <span class="num">64</span>),
+  <span class="kw">new</span> <span class="fn">Validator</span>(<span class="str">'Dave'</span>,     <span class="num">56</span>),
+];
+
+console.<span class="fn">log</span>(<span class="str">'Running 6-slot PoS epoch...\n'</span>);
+<span class="fn">runEpoch</span>(validators, <span class="num">6</span>);
+
+<span class="cmt">// Bob proposes two DIFFERENT blocks for slot 3 (equivocation).
+// Other validators detect the contradiction and submit a slashing proof.
+// Bob loses 10% stake: 160 → 144. His future selection odds shrink.</span>
+console.<span class="fn">log</span>(<span class="str">'\n--- Bob signs two conflicting blocks (equivocation detected) ---'</span>);
+<span class="fn">slash</span>(validators[<span class="num">1</span>], <span class="num">10</span>);
+
+<span class="cmt">// New total stake = 320 + 144 + 64 + 56 = 584 ETH
+// Bob's new expected share: 144/584 ≈ 25% (was 27%)</span>
+console.<span class="fn">log</span>(<span class="str">'\nRunning next epoch after slashing...\n'</span>);
+<span class="fn">runEpoch</span>(validators, <span class="num">6</span>);</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 5 — BUILD YOUR OWN BLOCKCHAIN            -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s5">
+      <div class="section-badge">&#128296; Hands-on</div>
+      <h2 class="section-title">05 — Build a Blockchain in Node.js</h2>
+      <p>Now we put everything together into a working blockchain simulation. This is not a production implementation — it's a learning tool that demonstrates every concept we've covered: hashing, blocks, chaining, Merkle roots, Proof-of-Work, and chain validation.</p>
+
+      <h3>File: <code>blockchain-core.js</code></h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">blockchain-core.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+
+<span class="cmt">// ─────────────────────────────────────────────────────
+// Utility: SHA-256 hash
+// ─────────────────────────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">sha256</span>(data) {
+  <span class="kw">return</span> crypto.<span class="fn">createHash</span>(<span class="str">'sha256'</span>).<span class="fn">update</span>(data).<span class="fn">digest</span>(<span class="str">'hex'</span>);
+}
+
+<span class="cmt">// ─────────────────────────────────────────────────────
+// Merkle Root
+// ─────────────────────────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">merkleRoot</span>(txs) {
+  <span class="kw">if</span> (!txs.length) <span class="kw">return</span> <span class="fn">sha256</span>(<span class="str">''</span>);
+  <span class="kw">let</span> layer = txs.<span class="fn">map</span>(t => <span class="fn">sha256</span>(JSON.<span class="fn">stringify</span>(t)));
+  <span class="kw">while</span> (layer.length > <span class="num">1</span>) {
+    <span class="kw">if</span> (layer.length % <span class="num">2</span>) layer.<span class="fn">push</span>(layer.at(-<span class="num">1</span>));
+    layer = layer.<span class="fn">reduce</span>((acc, _, i, a) =>
+      i % <span class="num">2</span> === <span class="num">0</span> ? [...acc, <span class="fn">sha256</span>(a[i] + a[i+<span class="num">1</span>])] : acc, []);
+  }
+  <span class="kw">return</span> layer[<span class="num">0</span>];
+}
+
+<span class="cmt">// ─────────────────────────────────────────────────────
+// Block
+// ─────────────────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="ty">Block</span> {
+  <span class="fn">constructor</span>(index, transactions, previousHash = <span class="str">''</span>) {
+    <span class="kw">this</span>.index        = index;
+    <span class="kw">this</span>.timestamp    = <span class="kw">new</span> <span class="ty">Date</span>().<span class="fn">toISOString</span>();
+    <span class="kw">this</span>.transactions = transactions;
+    <span class="kw">this</span>.previousHash = previousHash;
+    <span class="kw">this</span>.merkleRoot   = <span class="fn">merkleRoot</span>(transactions);
+    <span class="kw">this</span>.nonce        = <span class="num">0</span>;
+    <span class="kw">this</span>.hash         = <span class="kw">this</span>.<span class="fn">calculateHash</span>();
+  }
+
+  <span class="fn">calculateHash</span>() {
+    <span class="kw">const</span> content = JSON.<span class="fn">stringify</span>({
+      index:        <span class="kw">this</span>.index,
+      timestamp:    <span class="kw">this</span>.timestamp,
+      merkleRoot:   <span class="kw">this</span>.merkleRoot,
+      previousHash: <span class="kw">this</span>.previousHash,
+      nonce:        <span class="kw">this</span>.nonce,
+    });
+    <span class="kw">return</span> <span class="fn">sha256</span>(content);
+  }
+
+  <span class="fn">mine</span>(difficulty) {
+    <span class="kw">const</span> target = <span class="str">'0'</span>.<span class="fn">repeat</span>(difficulty);
+    <span class="kw">while</span> (!<span class="kw">this</span>.hash.<span class="fn">startsWith</span>(target)) {
+      <span class="kw">this</span>.nonce++;
+      <span class="kw">this</span>.hash = <span class="kw">this</span>.<span class="fn">calculateHash</span>();
+    }
+    console.<span class="fn">log</span>(<span class="str">`  ⛏  Block <span class="op">${</span><span class="kw">this</span>.index<span class="op">}</span> mined (nonce=<span class="op">${</span><span class="kw">this</span>.nonce<span class="op">}</span>): <span class="op">${</span><span class="kw">this</span>.hash.<span class="fn">slice</span>(<span class="num">0</span>,<span class="num">20</span>)<span class="op">}</span>...`</span>);
+  }
+}
+
+<span class="cmt">// ─────────────────────────────────────────────────────
+// Transaction
+// ─────────────────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="ty">Transaction</span> {
+  <span class="fn">constructor</span>(from, to, amount) {
+    <span class="kw">this</span>.from      = from;
+    <span class="kw">this</span>.to        = to;
+    <span class="kw">this</span>.amount    = amount;
+    <span class="kw">this</span>.timestamp = Date.<span class="fn">now</span>();
+  }
+}
+
+<span class="cmt">// ─────────────────────────────────────────────────────
+// Blockchain
+// ─────────────────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="ty">Blockchain</span> {
+  <span class="fn">constructor</span>(difficulty = <span class="num">3</span>) {
+    <span class="kw">this</span>.difficulty = difficulty;
+    <span class="kw">this</span>.pending    = [];          <span class="cmt">// mempool</span>
+    <span class="kw">this</span>.chain      = [<span class="kw">this</span>.<span class="fn">createGenesis</span>()];
+  }
+
+  <span class="fn">createGenesis</span>() {
+    <span class="kw">const</span> genesis = <span class="kw">new</span> <span class="ty">Block</span>(<span class="num">0</span>, [], <span class="str">'0000000000000000'</span>);
+    genesis.hash  = genesis.<span class="fn">calculateHash</span>();
+    <span class="kw">return</span> genesis;
+  }
+
+  <span class="fn">addTransaction</span>(tx) {
+    <span class="kw">if</span> (!tx.from || !tx.to || tx.amount <= <span class="num">0</span>) <span class="kw">throw new</span> <span class="ty">Error</span>(<span class="str">'Invalid transaction'</span>);
+    <span class="kw">this</span>.pending.<span class="fn">push</span>(tx);
+    console.<span class="fn">log</span>(<span class="str">`  + Pending tx: <span class="op">${</span>tx.from<span class="op">}</span> → <span class="op">${</span>tx.to<span class="op">}</span> (<span class="op">${</span>tx.amount<span class="op">}</span>)`</span>);
+  }
+
+  <span class="fn">minePendingTransactions</span>() {
+    <span class="kw">const</span> latest = <span class="kw">this</span>.chain.at(-<span class="num">1</span>);
+    <span class="kw">const</span> block  = <span class="kw">new</span> <span class="ty">Block</span>(<span class="kw">this</span>.chain.length, [...<span class="kw">this</span>.pending], latest.hash);
+    block.<span class="fn">mine</span>(<span class="kw">this</span>.difficulty);
+    <span class="kw">this</span>.chain.<span class="fn">push</span>(block);
+    <span class="kw">this</span>.pending = [];
+  }
+
+  <span class="fn">getBalance</span>(address) {
+    <span class="kw">let</span> balance = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">const</span> block <span class="kw">of</span> <span class="kw">this</span>.chain) {
+      <span class="kw">for</span> (<span class="kw">const</span> tx <span class="kw">of</span> block.transactions) {
+        <span class="kw">if</span> (tx.from === address) balance -= tx.amount;
+        <span class="kw">if</span> (tx.to   === address) balance += tx.amount;
+      }
+    }
+    <span class="kw">return</span> balance;
+  }
+
+  <span class="fn">isValid</span>() {
+    <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">1</span>; i < <span class="kw">this</span>.chain.length; i++) {
+      <span class="kw">const</span> cur  = <span class="kw">this</span>.chain[i];
+      <span class="kw">const</span> prev = <span class="kw">this</span>.chain[i - <span class="num">1</span>];
+      <span class="kw">if</span> (cur.hash !== cur.<span class="fn">calculateHash</span>())  <span class="kw">return false</span>;
+      <span class="kw">if</span> (cur.previousHash !== prev.hash)      <span class="kw">return false</span>;
+    }
+    <span class="kw">return true</span>;
+  }
+}
+
+<span class="cmt">// ─────────────────────────────────────────────────────
+// Demo — run with: node blockchain-core.js
+// ─────────────────────────────────────────────────────</span>
+<span class="kw">const</span> bc = <span class="kw">new</span> <span class="ty">Blockchain</span>(<span class="num">3</span>);
+
+console.<span class="fn">log</span>(<span class="str">'\n=== Adding transactions to mempool ==='</span>);
+bc.<span class="fn">addTransaction</span>(<span class="kw">new</span> <span class="ty">Transaction</span>(<span class="str">'Alice'</span>, <span class="str">'Bob'</span>,   <span class="num">50</span>));
+bc.<span class="fn">addTransaction</span>(<span class="kw">new</span> <span class="ty">Transaction</span>(<span class="str">'Bob'</span>,   <span class="str">'Carol'</span>, <span class="num">20</span>));
+
+console.<span class="fn">log</span>(<span class="str">'\n=== Mining block 1 ==='</span>);
+bc.<span class="fn">minePendingTransactions</span>();
+
+bc.<span class="fn">addTransaction</span>(<span class="kw">new</span> <span class="ty">Transaction</span>(<span class="str">'Carol'</span>, <span class="str">'Alice'</span>, <span class="num">10</span>));
+
+console.<span class="fn">log</span>(<span class="str">'\n=== Mining block 2 ==='</span>);
+bc.<span class="fn">minePendingTransactions</span>();
+
+console.<span class="fn">log</span>(<span class="str">'\n=== Balances ==='</span>);
+console.<span class="fn">log</span>(<span class="str">'Alice :'</span>, bc.<span class="fn">getBalance</span>(<span class="str">'Alice'</span>));  <span class="cmt">// -40</span>
+console.<span class="fn">log</span>(<span class="str">'Bob   :'</span>, bc.<span class="fn">getBalance</span>(<span class="str">'Bob'</span>));    <span class="cmt">// 30</span>
+console.<span class="fn">log</span>(<span class="str">'Carol :'</span>, bc.<span class="fn">getBalance</span>(<span class="str">'Carol'</span>));  <span class="cmt">// 10</span>
+console.<span class="fn">log</span>(<span class="str">'\nChain valid?'</span>, bc.<span class="fn">isValid</span>());     <span class="cmt">// true</span>
+
+<span class="cmt">// Tamper with a transaction — chain should become invalid</span>
+bc.chain[<span class="num">1</span>].transactions[<span class="num">0</span>].amount = <span class="num">9999</span>;
+console.<span class="fn">log</span>(<span class="str">'After tampering:'</span>, bc.<span class="fn">isValid</span>()); <span class="cmt">// false</span></code></pre>
+      </div>
+
+      <h3>Run it</h3>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <pre><span class="prompt">$ </span><span class="cmd">node blockchain-core.js</span>
+
+<span class="out">=== Adding transactions to mempool ===
+  + Pending tx: Alice → Bob (50)
+  + Pending tx: Bob → Carol (20)
+
+=== Mining block 1 ===
+  ⛏  Block 1 mined (nonce=4821): 000a3f7c9e...
+
+=== Mining block 2 ===
+  ⛏  Block 2 mined (nonce=1203): 000b2e1a4d...
+
+=== Balances ===
+Alice : -40
+Bob   : 30
+Carol : 10
+
+Chain valid? true
+After tampering: false</span></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>What just happened?</strong>
+          You built a working blockchain from scratch — with a mempool, Proof-of-Work mining, Merkle roots, balance tracking, and tamper detection. Real blockchains like Bitcoin follow exactly the same principles, just with far more nodes, cryptographic signatures, and additional rules.
+        </div>
+      </div>
+    </section>
+    <!-- END SECTIONS 1–5 -->
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 6 — ETHEREUM ARCHITECTURE               -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s6">
+      <div class="section-badge">&#9830; Ethereum</div>
+      <h2 class="section-title">06 — Ethereum Architecture</h2>
+      <p>Ethereum extends Bitcoin's simple ledger idea with a <strong>world computer</strong>. Every node in the network runs the same virtual machine (the <strong>EVM</strong>), which can execute arbitrary programs called <strong>smart contracts</strong>. This turns the blockchain from a payment rail into a programmable platform.</p>
+
+      <h3>Bitcoin vs Ethereum — core difference</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feature</th><th>Bitcoin</th><th>Ethereum</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Purpose</strong></td><td>Store &amp; transfer value</td><td>Programmable world computer</td></tr>
+            <tr><td><strong>Native token</strong></td><td>BTC</td><td>ETH (Ether)</td></tr>
+            <tr><td><strong>Scripting</strong></td><td>Bitcoin Script (limited)</td><td>EVM — Turing-complete</td></tr>
+            <tr><td><strong>Block time</strong></td><td>~10 minutes</td><td>~12 seconds</td></tr>
+            <tr><td><strong>Consensus</strong></td><td>Proof of Work</td><td>Proof of Stake (post-Merge, Sep 2022)</td></tr>
+            <tr><td><strong>Smart contracts</strong></td><td>No</td><td>Yes</td></tr>
+            <tr><td><strong>Token standards</strong></td><td>No</td><td>ERC-20, ERC-721, ERC-1155…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The Ethereum stack</h3>
+      <div class="flow" style="flex-direction:column; gap:0.5rem;">
+        <div class="flow-node" style="width:100%; background:rgba(88,166,255,0.1); border-color:var(--accent);">
+          <strong style="color:var(--text)">Your dApp (frontend)</strong>
+          <small>React / HTML / ethers.js — talks to the network via a Provider</small>
+        </div>
+        <div class="flow-arrow" style="align-self:center;">&#8595;</div>
+        <div class="flow-node" style="width:100%; background:rgba(63,185,80,0.1); border-color:var(--accent2);">
+          <strong style="color:var(--text)">JSON-RPC API</strong>
+          <small>Standard interface: eth_call, eth_sendTransaction, eth_getBalance…</small>
+        </div>
+        <div class="flow-arrow" style="align-self:center;">&#8595;</div>
+        <div class="flow-node" style="width:100%;">
+          <strong style="color:var(--text)">Ethereum Node (Geth / Besu / Nethermind)</strong>
+          <small>Validates blocks, stores state, runs the EVM, gossips transactions</small>
+        </div>
+        <div class="flow-arrow" style="align-self:center;">&#8595;</div>
+        <div class="flow-node" style="width:100%; background:rgba(188,140,255,0.1); border-color:var(--accent4);">
+          <strong style="color:var(--text)">EVM — Ethereum Virtual Machine</strong>
+          <small>Stack-based, 256-bit word, executes Solidity bytecode deterministically on every node</small>
+        </div>
+        <div class="flow-arrow" style="align-self:center;">&#8595;</div>
+        <div class="flow-node" style="width:100%; background:rgba(240,136,62,0.1); border-color:var(--accent3);">
+          <strong style="color:var(--text)">World State</strong>
+          <small>A Merkle Patricia Trie mapping every address → {balance, nonce, code, storage}</small>
+        </div>
+      </div>
+
+      <h3>The EVM in detail</h3>
+      <p>The <strong>Ethereum Virtual Machine</strong> is the runtime environment for smart contracts. Key characteristics:</p>
+      <ul>
+        <li><strong>Stack-based</strong> — operations push/pop 32-byte (256-bit) values onto a stack.</li>
+        <li><strong>Isolated</strong> — contracts cannot access the filesystem, network, or random numbers natively.</li>
+        <li><strong>Deterministic</strong> — given the same inputs, every node produces the exact same result.</li>
+        <li><strong>Gas-metered</strong> — every opcode costs a fixed amount of gas, preventing infinite loops.</li>
+        <li><strong>Solidity → bytecode</strong> — the Solidity compiler (<code>solc</code>) converts your code to EVM opcodes (<code>ADD</code>, <code>SSTORE</code>, <code>CALL</code>, etc.).</li>
+      </ul>
+
+      <h3>Ethereum networks</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Network</th><th>Use</th><th>ETH value</th><th>Chain ID</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Mainnet</strong></td><td>Production — real money</td><td>Real</td><td>1</td></tr>
+            <tr><td><strong>Sepolia</strong></td><td>Testing — closest to mainnet</td><td>Free (faucet)</td><td>11155111</td></tr>
+            <tr><td><strong>Hardhat Network</strong></td><td>Local dev — instant, free</td><td>Fake</td><td>31337</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>Always develop on Hardhat Network first</strong>, then Sepolia, then Mainnet. The Hardhat Network is instant, has no gas costs, and lets you mine blocks on demand — perfect for iterating fast.
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 7 — ACCOUNTS & WALLETS                  -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s7">
+      <div class="section-badge">&#128272; Accounts</div>
+      <h2 class="section-title">07 — Accounts &amp; Wallets</h2>
+      <p>Ethereum has two types of accounts. Understanding the difference is essential before writing any code.</p>
+
+      <div class="card-grid">
+        <div class="card" style="border-color: rgba(88,166,255,0.4);">
+          <div class="card-icon">&#128100;</div>
+          <div class="card-title">Externally Owned Account (EOA)</div>
+          <p>Controlled by a <strong>private key</strong>. This is your wallet (MetaMask, hardware wallet). Has an ETH balance. Can sign and send transactions. Has <strong>no code</strong>.</p>
+        </div>
+        <div class="card" style="border-color: rgba(63,185,80,0.4);">
+          <div class="card-icon">&#128196;</div>
+          <div class="card-title">Contract Account (CA)</div>
+          <p>Controlled by its <strong>deployed code</strong>. Has an ETH balance. Has <strong>storage</strong> (persistent state). Cannot initiate transactions on its own — must be triggered by an EOA.</p>
+        </div>
+      </div>
+
+      <h3>Keys, addresses and how they relate</h3>
+      <div class="steps">
+        <div class="step" data-n="1">
+          <div class="step-body">
+            <strong>Private Key — 32 random bytes (256 bits)</strong>
+            <p>This is the master secret. Anyone who has it controls the account. <strong>Never share it. Never commit it to git.</strong></p>
+          </div>
+        </div>
+        <div class="step" data-n="2">
+          <div class="step-body">
+            <strong>Public Key — derived from private key (ECDSA / secp256k1)</strong>
+            <p>A 64-byte point on the elliptic curve. Mathematically derived from the private key. You can share it freely.</p>
+          </div>
+        </div>
+        <div class="step" data-n="3">
+          <div class="step-body">
+            <strong>Address — last 20 bytes of keccak256(publicKey)</strong>
+            <p>The 40-character hex string (<code>0x742d35Cc...</code>) you share with others to receive ETH or call contracts.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Create a wallet with ethers.js</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">wallet.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+
+<span class="cmt">// ── 1. Generate a brand-new random wallet ──────────────</span>
+<span class="kw">const</span> wallet = ethers.Wallet.<span class="fn">createRandom</span>();
+
+console.<span class="fn">log</span>(<span class="str">'Address    :'</span>, wallet.address);
+<span class="cmt">// 0x742d35Cc6634C0532925a3b844Bc454e4438f44e</span>
+
+console.<span class="fn">log</span>(<span class="str">'Private key:'</span>, wallet.privateKey);
+<span class="cmt">// 0xabc123... (NEVER share this!)</span>
+
+console.<span class="fn">log</span>(<span class="str">'Public key :'</span>, wallet.publicKey);
+<span class="cmt">// 0x04f8a2... (safe to share)</span>
+
+console.<span class="fn">log</span>(<span class="str">'Mnemonic   :'</span>, wallet.mnemonic.phrase);
+<span class="cmt">// word1 word2 word3 ... word12  (BIP-39 seed phrase)</span>
+
+<span class="cmt">// ── 2. Restore wallet from private key ────────────────</span>
+<span class="kw">const</span> restored = <span class="kw">new</span> ethers.<span class="ty">Wallet</span>(process.env.PRIVATE_KEY);
+console.<span class="fn">log</span>(<span class="str">'Restored address:'</span>, restored.address);
+
+<span class="cmt">// ── 3. Restore from mnemonic (seed phrase) ────────────</span>
+<span class="kw">const</span> fromMnemonic = ethers.Wallet.<span class="fn">fromPhrase</span>(
+  <span class="str">'word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12'</span>
+);
+console.<span class="fn">log</span>(<span class="str">'From mnemonic:'</span>, fromMnemonic.address);
+
+<span class="cmt">// ── 4. Connect wallet to a provider (to read/write chain)</span>
+<span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(<span class="str">'http://127.0.0.1:8545'</span>);
+<span class="kw">const</span> connected = restored.<span class="fn">connect</span>(provider);
+
+<span class="cmt">// ── 5. Check balance ──────────────────────────────────</span>
+<span class="kw">async function</span> <span class="fn">checkBalance</span>() {
+  <span class="kw">const</span> balance = <span class="kw">await</span> provider.<span class="fn">getBalance</span>(connected.address);
+  console.<span class="fn">log</span>(<span class="str">'Balance:'</span>, ethers.<span class="fn">formatEther</span>(balance), <span class="str">'ETH'</span>);
+}
+<span class="fn">checkBalance</span>();
+
+<span class="cmt">// ── 6. Sign a message (prove ownership without tx) ────</span>
+<span class="kw">async function</span> <span class="fn">signMessage</span>() {
+  <span class="kw">const</span> signature = <span class="kw">await</span> wallet.<span class="fn">signMessage</span>(<span class="str">'I own this wallet'</span>);
+  console.<span class="fn">log</span>(<span class="str">'Signature:'</span>, signature);
+
+  <span class="cmt">// Anyone can verify the signature to confirm the signer's address</span>
+  <span class="kw">const</span> recovered = ethers.<span class="fn">verifyMessage</span>(<span class="str">'I own this wallet'</span>, signature);
+  console.<span class="fn">log</span>(<span class="str">'Verified signer:'</span>, recovered);
+  console.<span class="fn">log</span>(<span class="str">'Matches?'</span>, recovered === wallet.address); <span class="cmt">// true</span>
+}
+<span class="fn">signMessage</span>();</code></pre>
+      </div>
+
+      <h3>HD Wallets — one seed, many addresses</h3>
+      <p>MetaMask and hardware wallets use <strong>Hierarchical Deterministic (HD) wallets</strong> (BIP-32/44). One 12-word seed phrase generates a tree of key pairs, so you have unlimited addresses from one backup.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">hd-wallet.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+
+<span class="kw">const</span> mnemonic = <span class="str">'test test test test test test test test test test test junk'</span>;
+<span class="kw">const</span> hdNode   = ethers.HDNodeWallet.<span class="fn">fromPhrase</span>(mnemonic);
+
+<span class="cmt">// Derive first 5 accounts (same as MetaMask Account 1–5)</span>
+<span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < <span class="num">5</span>; i++) {
+  <span class="kw">const</span> child = hdNode.<span class="fn">derivePath</span>(<span class="str">`m/44'/60'/0'/0/<span class="op">${</span>i<span class="op">}</span>`</span>);
+  console.<span class="fn">log</span>(<span class="str">`Account <span class="op">${</span>i<span class="op">}</span>: <span class="op">${</span>child.address<span class="op">}</span>`</span>);
+}
+<span class="cmt">// Account 0: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266  ← Hardhat #0
+// Account 1: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8  ← Hardhat #1
+// ...</span></code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>Hardhat's default accounts</strong> are derived from the mnemonic <code>"test test test … junk"</code>, which is why you'll see those same addresses in every Hardhat project. They come pre-funded with 10,000 fake ETH on the local network.
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 8 — TRANSACTIONS & GAS                  -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s8">
+      <div class="section-badge">&#9981; Transactions</div>
+      <h2 class="section-title">08 — Transactions &amp; Gas</h2>
+      <p>A <strong>transaction</strong> is the only way to change state on Ethereum. Reading data is free — writing costs gas. Every transaction must be signed by an EOA's private key.</p>
+
+      <h3>Anatomy of a transaction</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>nonce</code></td><td>number</td><td>How many transactions this address has sent before. Prevents replay attacks.</td></tr>
+            <tr><td><code>to</code></td><td>address</td><td>Recipient address. Empty for contract deployment.</td></tr>
+            <tr><td><code>value</code></td><td>wei</td><td>Amount of ETH to send (in wei — the smallest unit).</td></tr>
+            <tr><td><code>data</code></td><td>bytes</td><td>Encoded function call for contract interaction. Empty for plain ETH transfer.</td></tr>
+            <tr><td><code>gasLimit</code></td><td>number</td><td>Max gas units you allow this transaction to consume.</td></tr>
+            <tr><td><code>maxFeePerGas</code></td><td>wei</td><td>Max you'll pay per gas unit (EIP-1559).</td></tr>
+            <tr><td><code>maxPriorityFeePerGas</code></td><td>wei</td><td>Tip to validator for including your tx faster.</td></tr>
+            <tr><td><code>chainId</code></td><td>number</td><td>Which network (1 = mainnet, 11155111 = Sepolia). Prevents cross-chain replay.</td></tr>
+            <tr><td><code>v, r, s</code></td><td>bytes</td><td>ECDSA signature components — proves the sender owns the private key.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Understanding Gas</h3>
+      <p><strong>Gas</strong> is the unit of computational work. Every EVM opcode costs a fixed number of gas units. You pay: <code>gas_used × gas_price</code> in ETH.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">&#9981;</div>
+          <div class="card-title">gasLimit</div>
+          <p>The max gas you allow. If execution uses more, it <strong>reverts</strong> but you still pay for the gas used up to that point. Always set a comfortable margin above the estimate.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128176;</div>
+          <div class="card-title">baseFee</div>
+          <p>Set by the protocol based on network congestion (EIP-1559). This portion is <strong>burned</strong> (removed from supply). You cannot pay less than this.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128072;</div>
+          <div class="card-title">priorityFee (tip)</div>
+          <p>Goes to the validator who includes your transaction. Higher tip = faster inclusion when the network is busy.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128200;</div>
+          <div class="card-title">Total fee</div>
+          <p><code>(baseFee + tip) × gasUsed</code>. For a simple ETH transfer, <code>gasUsed = 21,000</code> exactly.</p>
+        </div>
+      </div>
+
+      <h3>ETH units — from wei to ether</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Unit</th><th>Wei value</th><th>Usage</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Wei</strong></td><td>1</td><td>Smallest unit. All EVM calculations use wei internally.</td></tr>
+            <tr><td><strong>Gwei</strong></td><td>10⁹ (1,000,000,000)</td><td>Gas prices are expressed in Gwei. "30 Gwei" = 30 × 10⁹ wei.</td></tr>
+            <tr><td><strong>Ether</strong></td><td>10¹⁸</td><td>What you see in your wallet. 1 ETH = 10¹⁸ wei.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Send ETH and inspect a transaction (Node.js)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">send-eth.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+
+<span class="kw">async function</span> <span class="fn">main</span>() {
+  <span class="cmt">// Connect to local Hardhat node (start with: npx hardhat node)</span>
+  <span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(<span class="str">'http://127.0.0.1:8545'</span>);
+
+  <span class="cmt">// Use Hardhat account #0 (already has 10,000 ETH)</span>
+  <span class="kw">const</span> sender = <span class="kw">new</span> ethers.<span class="ty">Wallet</span>(
+    <span class="str">'0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'</span>, <span class="cmt">// Hardhat #0</span>
+    provider
+  );
+  <span class="kw">const</span> recipient = <span class="str">'0x70997970C51812dc3A010C7d01b50e0d17dc79C8'</span>; <span class="cmt">// Hardhat #1</span>
+
+  <span class="cmt">// ── Check balances before ─────────────────────────────</span>
+  <span class="kw">const</span> before = <span class="kw">await</span> provider.<span class="fn">getBalance</span>(sender.address);
+  console.<span class="fn">log</span>(<span class="str">'Sender before :'</span>, ethers.<span class="fn">formatEther</span>(before), <span class="str">'ETH'</span>);
+
+  <span class="cmt">// ── Estimate gas before sending ───────────────────────</span>
+  <span class="kw">const</span> gasEstimate = <span class="kw">await</span> provider.<span class="fn">estimateGas</span>({
+    from:  sender.address,
+    to:    recipient,
+    value: ethers.<span class="fn">parseEther</span>(<span class="str">'1.0'</span>),
+  });
+  console.<span class="fn">log</span>(<span class="str">'Gas estimate:'</span>, gasEstimate.<span class="fn">toString</span>()); <span class="cmt">// 21000</span>
+
+  <span class="cmt">// ── Send 1 ETH ────────────────────────────────────────</span>
+  <span class="kw">const</span> tx = <span class="kw">await</span> sender.<span class="fn">sendTransaction</span>({
+    to:    recipient,
+    value: ethers.<span class="fn">parseEther</span>(<span class="str">'1.0'</span>),  <span class="cmt">// 1 ETH in wei</span>
+  });
+  console.<span class="fn">log</span>(<span class="str">'\nTransaction sent!'</span>);
+  console.<span class="fn">log</span>(<span class="str">'  Hash    :'</span>, tx.hash);
+  console.<span class="fn">log</span>(<span class="str">'  Nonce   :'</span>, tx.nonce);
+  console.<span class="fn">log</span>(<span class="str">'  gasLimit:'</span>, tx.gasLimit.<span class="fn">toString</span>());
+
+  <span class="cmt">// ── Wait for confirmation ─────────────────────────────</span>
+  <span class="kw">const</span> receipt = <span class="kw">await</span> tx.<span class="fn">wait</span>(<span class="num">1</span>); <span class="cmt">// wait for 1 block confirmation</span>
+  console.<span class="fn">log</span>(<span class="str">'\nMined in block:'</span>, receipt.blockNumber);
+  console.<span class="fn">log</span>(<span class="str">'Gas used      :'</span>, receipt.gasUsed.<span class="fn">toString</span>());
+  console.<span class="fn">log</span>(<span class="str">'Status        :'</span>, receipt.status === <span class="num">1</span> ? <span class="str">'✅ Success'</span> : <span class="str">'❌ Failed'</span>);
+
+  <span class="cmt">// ── Fee calculation ───────────────────────────────────</span>
+  <span class="kw">const</span> feeWei = receipt.gasUsed * receipt.gasPrice;
+  console.<span class="fn">log</span>(<span class="str">'Fee paid      :'</span>, ethers.<span class="fn">formatEther</span>(feeWei), <span class="str">'ETH'</span>);
+
+  <span class="cmt">// ── Balances after ────────────────────────────────────</span>
+  <span class="kw">const</span> after = <span class="kw">await</span> provider.<span class="fn">getBalance</span>(sender.address);
+  console.<span class="fn">log</span>(<span class="str">'\nSender after  :'</span>, ethers.<span class="fn">formatEther</span>(after), <span class="str">'ETH'</span>);
+
+  <span class="cmt">// ── Look up the tx after the fact ────────────────────</span>
+  <span class="kw">const</span> fetched = <span class="kw">await</span> provider.<span class="fn">getTransaction</span>(tx.hash);
+  console.<span class="fn">log</span>(<span class="str">'\nFetched tx from chain:'</span>);
+  console.<span class="fn">log</span>(<span class="str">'  blockHash:'</span>, fetched.blockHash);
+  console.<span class="fn">log</span>(<span class="str">'  chainId  :'</span>, fetched.chainId.<span class="fn">toString</span>());
+}
+
+<span class="fn">main</span>().<span class="fn">catch</span>(console.error);</code></pre>
+      </div>
+
+      <h3>Run it against a local Hardhat node</h3>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal — two tabs</span>
+        </div>
+        <pre><span class="comment"># Tab 1: start a local Ethereum node</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat node</span>
+<span class="out">Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
+Account #0: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (10000 ETH)
+Account #1: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 (10000 ETH)
+...</span>
+
+<span class="comment"># Tab 2: run the script</span>
+<span class="prompt">$ </span><span class="cmd">node send-eth.js</span>
+<span class="out">Sender before : 10000.0 ETH
+Gas estimate  : 21000
+
+Transaction sent!
+  Hash    : 0x3a7f...
+  Nonce   : 0
+  gasLimit: 21000
+
+Mined in block: 1
+Gas used      : 21000
+Status        : ✅ Success
+Fee paid      : 0.000000000021 ETH
+
+Sender after  : 8999.999999999979 ETH</span></pre>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-icon">&#9888;</div>
+        <div class="callout-body">
+          <strong>Transaction types</strong>
+          Ethereum has two kinds of calls: <strong>transactions</strong> (change state, cost gas, require signing) and <strong>calls</strong> (read-only, free, no signature needed). In ethers.js, reading a <code>view</code> function uses <code>contract.fn()</code> internally as a call — no wallet needed. Writing uses <code>contract.fn()</code> with a signer attached, which creates a real transaction.
+        </div>
+      </div>
+    </section>
+    <!-- END SECTIONS 6–8 -->
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 9 — PROJECT SETUP (HARDHAT)             -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s9">
+      <div class="section-badge">&#9881; Node.js Project</div>
+      <h2 class="section-title">09 — Project Setup with Hardhat</h2>
+      <p><strong>Hardhat</strong> is the industry-standard Ethereum development environment. It gives you a local blockchain, Solidity compiler, test runner, deployment scripts, and a rich plugin ecosystem — all in one npm package.</p>
+
+      <h3>Step 1 — Initialize and install</h3>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <pre><span class="comment"># Create project folder</span>
+<span class="prompt">$ </span><span class="cmd">mkdir blockchain-dev && cd blockchain-dev</span>
+<span class="prompt">$ </span><span class="cmd">npm init -y</span>
+
+<span class="comment"># Core dev dependencies</span>
+<span class="prompt">$ </span><span class="cmd">npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox</span>
+
+<span class="comment"># Runtime dependencies</span>
+<span class="prompt">$ </span><span class="cmd">npm install ethers dotenv</span>
+
+<span class="comment"># OpenZeppelin — battle-tested base contracts</span>
+<span class="prompt">$ </span><span class="cmd">npm install @openzeppelin/contracts</span>
+
+<span class="comment"># Initialize Hardhat — select "Create a JavaScript project"</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat init</span>
+<span class="out">✔ What do you want to do? · Create a JavaScript project
+✔ Hardhat project root: · /blockchain-dev
+✔ Do you want to add a .gitignore? · yes
+✔ Do you want to install the sample project's dependencies? · yes</span></pre>
+      </div>
+
+      <h3>Step 2 — Configure Hardhat</h3>
+      <p>Replace the generated <code>hardhat.config.js</code> with this full configuration supporting local, Sepolia, and mainnet networks.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">hardhat.config.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="fn">require</span>(<span class="str">'@nomicfoundation/hardhat-toolbox'</span>);
+<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+
+<span class="cmt">// Safely read env vars — fallback to empty string so config loads without them</span>
+<span class="kw">const</span> PRIVATE_KEY      = process.env.PRIVATE_KEY      || <span class="str">'0x'</span> + <span class="str">'0'</span>.<span class="fn">repeat</span>(<span class="num">64</span>);
+<span class="kw">const</span> SEPOLIA_RPC_URL  = process.env.SEPOLIA_RPC_URL  || <span class="str">''</span>;
+<span class="kw">const</span> ETHERSCAN_KEY    = process.env.ETHERSCAN_API_KEY || <span class="str">''</span>;
+
+<span class="op">/** @type import('hardhat/config').HardhatUserConfig */</span>
+module.exports = {
+  <span class="key">solidity</span>: {
+    <span class="key">version</span>: <span class="str">'0.8.20'</span>,
+    <span class="key">settings</span>: {
+      <span class="key">optimizer</span>: {
+        <span class="key">enabled</span>: <span class="kw">true</span>,
+        <span class="key">runs</span>: <span class="num">200</span>,     <span class="cmt">// optimise for 200 calls — good default</span>
+      },
+    },
+  },
+
+  <span class="key">networks</span>: {
+    <span class="cmt">// Local Hardhat node — instant mining, 20 pre-funded accounts</span>
+    <span class="key">hardhat</span>: {
+      <span class="key">chainId</span>: <span class="num">31337</span>,
+    },
+    <span class="key">localhost</span>: {
+      <span class="key">url</span>: <span class="str">'http://127.0.0.1:8545'</span>,
+    },
+    <span class="cmt">// Sepolia testnet</span>
+    <span class="key">sepolia</span>: {
+      <span class="key">url</span>:      SEPOLIA_RPC_URL,
+      <span class="key">accounts</span>: [PRIVATE_KEY],
+      <span class="key">chainId</span>:  <span class="num">11155111</span>,
+    },
+  },
+
+  <span class="cmt">// Etherscan contract verification</span>
+  <span class="key">etherscan</span>: {
+    <span class="key">apiKey</span>: ETHERSCAN_KEY,
+  },
+
+  <span class="cmt">// Gas reporter — shows gas cost per function after tests</span>
+  <span class="key">gasReporter</span>: {
+    <span class="key">enabled</span>:  <span class="kw">true</span>,
+    <span class="key">currency</span>: <span class="str">'USD'</span>,
+  },
+};</code></pre>
+      </div>
+
+      <h3>Step 3 — Environment variables</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">.env</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt"># Your wallet's private key — export from MetaMask → Account details</span>
+PRIVATE_KEY=0xYOUR_PRIVATE_KEY_HERE
+
+<span class="cmt"># Alchemy or Infura RPC URL for Sepolia testnet</span>
+SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
+
+<span class="cmt"># Etherscan API key for contract verification</span>
+ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
+      </div>
+
+      <h3>Step 4 — Essential npm scripts</h3>
+      <p>Add these to <code>package.json</code> for convenience.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">package.json (scripts section)</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>{
+  <span class="key">"scripts"</span>: {
+    <span class="key">"compile"</span>:         <span class="str">"hardhat compile"</span>,
+    <span class="key">"test"</span>:            <span class="str">"hardhat test"</span>,
+    <span class="key">"test:gas"</span>:        <span class="str">"REPORT_GAS=true hardhat test"</span>,
+    <span class="key">"coverage"</span>:        <span class="str">"hardhat coverage"</span>,
+    <span class="key">"node"</span>:            <span class="str">"hardhat node"</span>,
+    <span class="key">"deploy:local"</span>:    <span class="str">"hardhat run scripts/deploy.js --network localhost"</span>,
+    <span class="key">"deploy:sepolia"</span>:  <span class="str">"hardhat run scripts/deploy.js --network sepolia"</span>,
+    <span class="key">"verify"</span>:          <span class="str">"hardhat verify --network sepolia"</span>,
+    <span class="key">"console"</span>:         <span class="str">"hardhat console --network localhost"</span>
+  }
+}</code></pre>
+      </div>
+
+      <h3>Key Hardhat commands</h3>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal — cheat sheet</span>
+        </div>
+        <pre><span class="comment"># Compile all .sol files in contracts/</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat compile</span>
+
+<span class="comment"># Run all tests in test/</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat test</span>
+
+<span class="comment"># Run a specific test file</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat test test/Token.test.js</span>
+
+<span class="comment"># Start local blockchain node (keep running in background)</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat node</span>
+
+<span class="comment"># Open an interactive JavaScript console connected to local node</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat console --network localhost</span>
+
+<span class="comment"># Show gas usage per function after tests</span>
+<span class="prompt">$ </span><span class="cmd">REPORT_GAS=true npx hardhat test</span>
+
+<span class="comment"># Check test coverage (% of code branches tested)</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat coverage</span></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>Hardhat Network vs localhost</strong>
+          <code>hardhat</code> network runs in-process with your tests (fastest). <code>localhost</code> connects to a running <code>npx hardhat node</code> process — useful when you want to keep state between script runs or use MetaMask against the local node.
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 10 — FOLDER STRUCTURE                   -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s10">
+      <div class="section-badge">&#128193; Structure</div>
+      <h2 class="section-title">10 — Project Folder Structure</h2>
+      <p>After running <code>npx hardhat init</code>, you get a standard layout. Here is what every folder and file does.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">project structure</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>blockchain-dev/
+│
+├── contracts/                  <span class="cmt">← All Solidity source files</span>
+│   ├── Token.sol
+│   ├── Voting.sol
+│   └── interfaces/
+│       └── IToken.sol
+│
+├── scripts/                    <span class="cmt">← Deployment &amp; utility scripts</span>
+│   ├── deploy.js
+│   └── interact.js
+│
+├── test/                       <span class="cmt">← Mocha/Chai test files</span>
+│   ├── Token.test.js
+│   └── Voting.test.js
+│
+├── artifacts/                  <span class="cmt">← Auto-generated: ABI + bytecode (gitignored)</span>
+│   └── contracts/
+│       └── Token.sol/
+│           └── Token.json      <span class="cmt">← { abi: [...], bytecode: "0x..." }</span>
+│
+├── cache/                      <span class="cmt">← Compiler cache (gitignored)</span>
+│
+├── .env                        <span class="cmt">← Secrets (gitignored!)</span>
+├── .gitignore
+├── hardhat.config.js           <span class="cmt">← Networks, compiler, plugins</span>
+└── package.json</code></pre>
+      </div>
+
+      <h3>What is the ABI?</h3>
+      <p>The <strong>Application Binary Interface (ABI)</strong> is a JSON array that describes every public function and event of a contract. ethers.js uses it to encode function calls into raw bytes the EVM understands.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">artifacts/contracts/Token.sol/Token.json (excerpt)</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>{
+  <span class="key">"abi"</span>: [
+    {
+      <span class="key">"type"</span>:    <span class="str">"function"</span>,
+      <span class="key">"name"</span>:    <span class="str">"transfer"</span>,
+      <span class="key">"inputs"</span>:  [
+        { <span class="key">"name"</span>: <span class="str">"to"</span>,     <span class="key">"type"</span>: <span class="str">"address"</span> },
+        { <span class="key">"name"</span>: <span class="str">"amount"</span>, <span class="key">"type"</span>: <span class="str">"uint256"</span> }
+      ],
+      <span class="key">"outputs"</span>: [{ <span class="key">"type"</span>: <span class="str">"bool"</span> }],
+      <span class="key">"stateMutability"</span>: <span class="str">"nonpayable"</span>
+    },
+    {
+      <span class="key">"type"</span>:      <span class="str">"event"</span>,
+      <span class="key">"name"</span>:      <span class="str">"Transfer"</span>,
+      <span class="key">"inputs"</span>:    [
+        { <span class="key">"name"</span>: <span class="str">"from"</span>,  <span class="key">"type"</span>: <span class="str">"address"</span>, <span class="key">"indexed"</span>: <span class="kw">true</span> },
+        { <span class="key">"name"</span>: <span class="str">"to"</span>,    <span class="key">"type"</span>: <span class="str">"address"</span>, <span class="key">"indexed"</span>: <span class="kw">true</span> },
+        { <span class="key">"name"</span>: <span class="str">"value"</span>, <span class="key">"type"</span>: <span class="str">"uint256"</span>, <span class="key">"indexed"</span>: <span class="kw">false</span> }
+      ]
+    }
+  ],
+  <span class="key">"bytecode"</span>: <span class="str">"0x608060405234801561001057600080fd..."</span>
+}</code></pre>
+      </div>
+
+      <h3>Loading artifacts in scripts &amp; tests</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">scripts/interact.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'hardhat'</span>);   <span class="cmt">// ← import from hardhat, not ethers directly</span>
+
+<span class="kw">async function</span> <span class="fn">main</span>() {
+  <span class="cmt">// getContractFactory auto-loads ABI + bytecode from artifacts/</span>
+  <span class="kw">const</span> Token = <span class="kw">await</span> ethers.<span class="fn">getContractFactory</span>(<span class="str">'Token'</span>);
+
+  <span class="cmt">// Attach to an already-deployed contract at a known address</span>
+  <span class="kw">const</span> token = Token.<span class="fn">attach</span>(<span class="str">'0xDeployedContractAddress'</span>);
+
+  <span class="cmt">// Or load ABI manually (useful in standalone scripts)</span>
+  <span class="kw">const</span> artifact = <span class="fn">require</span>(<span class="str">'./artifacts/contracts/Token.sol/Token.json'</span>);
+  <span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(<span class="str">'http://127.0.0.1:8545'</span>);
+  <span class="kw">const</span> contract = <span class="kw">new</span> ethers.<span class="ty">Contract</span>(<span class="str">'0xAddress'</span>, artifact.abi, provider);
+
+  console.<span class="fn">log</span>(<span class="str">'Name:'</span>, <span class="kw">await</span> contract.<span class="fn">name</span>());
+}
+
+<span class="fn">main</span>().<span class="fn">catch</span>(console.error);</code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">&#9432;</div>
+        <div class="callout-body">
+          <strong>Always import ethers from hardhat</strong> in scripts and tests: <code>require('hardhat')</code>, not <code>require('ethers')</code> directly. Hardhat's version is pre-configured with your network settings, signers, and contract factories.
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 11 — SOLIDITY: DATA TYPES & VARIABLES   -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s11">
+      <div class="section-badge">&#128296; Solidity</div>
+      <h2 class="section-title">11 — Solidity: Data Types &amp; Variables</h2>
+      <p>Solidity is a statically typed, compiled language designed specifically for the EVM. Every value has a type known at compile time, and all state is stored in a 256-bit key-value store on the blockchain.</p>
+
+      <h3>Value types</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Size</th><th>Example</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>bool</code></td><td>1 byte</td><td><code>true</code> / <code>false</code></td><td>Logical true/false</td></tr>
+            <tr><td><code>uint256</code></td><td>32 bytes</td><td><code>100</code></td><td>Unsigned integer 0 → 2²⁵⁶-1. Default uint size.</td></tr>
+            <tr><td><code>uint8</code>–<code>uint256</code></td><td>1–32 bytes</td><td><code>uint8 decimals = 18</code></td><td>Any multiple of 8 bits</td></tr>
+            <tr><td><code>int256</code></td><td>32 bytes</td><td><code>-42</code></td><td>Signed integer. Also int8–int256.</td></tr>
+            <tr><td><code>address</code></td><td>20 bytes</td><td><code>0xAbCd...</code></td><td>Ethereum address. Has <code>.balance</code> &amp; <code>.transfer()</code>.</td></tr>
+            <tr><td><code>address payable</code></td><td>20 bytes</td><td>—</td><td>Like address but can receive ETH.</td></tr>
+            <tr><td><code>bytes32</code></td><td>32 bytes</td><td><code>keccak256(...)</code></td><td>Fixed-size byte array. Efficient for hashes.</td></tr>
+            <tr><td><code>bytes</code></td><td>dynamic</td><td>raw data</td><td>Dynamic byte array.</td></tr>
+            <tr><td><code>string</code></td><td>dynamic</td><td><code>"Hello"</code></td><td>UTF-8 encoded. Expensive to store.</td></tr>
+            <tr><td><code>enum</code></td><td>uint8</td><td><code>Status.Active</code></td><td>Named constants starting at 0.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Variable locations: storage, memory, calldata</h3>
+      <div class="card-grid">
+        <div class="card" style="border-color:rgba(255,123,114,0.4)">
+          <div class="card-title">storage <span class="badge badge-red">persistent</span></div>
+          <p>Written to the blockchain. Costs ~20,000 gas to write a new slot. This is where state variables live.</p>
+        </div>
+        <div class="card" style="border-color:rgba(88,166,255,0.4)">
+          <div class="card-title">memory <span class="badge badge-blue">temporary</span></div>
+          <p>Exists only during function execution. Cheap to use. Must be specified for strings, arrays, and structs in function parameters.</p>
+        </div>
+        <div class="card" style="border-color:rgba(63,185,80,0.4)">
+          <div class="card-title">calldata <span class="badge badge-green">read-only</span></div>
+          <p>Like memory but immutable. Used for external function parameters. Cheaper than memory — use it when you don't need to modify the input.</p>
+        </div>
+      </div>
+
+      <h3>Variable types: state, local, global</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">DataTypes.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="kw">contract</span> <span class="ty">DataTypes</span> {
+
+  <span class="cmt">// ── STATE VARIABLES (storage — live on the blockchain) ──</span>
+  <span class="kw">uint256 public</span>  counter;           <span class="cmt">// defaults to 0</span>
+  <span class="kw">bool    public</span>  isActive = <span class="kw">true</span>;
+  <span class="kw">address public</span>  owner;
+  <span class="kw">string  public</span>  name     = <span class="str">"MyContract"</span>;
+  <span class="kw">bytes32 public</span>  dataHash;
+
+  <span class="cmt">// ── CONSTANTS &amp; IMMUTABLES ───────────────────────────────</span>
+  <span class="kw">uint256 public constant</span>   MAX_SUPPLY = <span class="num">1_000_000</span>; <span class="cmt">// stored in bytecode</span>
+  <span class="kw">address public immutable</span>  FACTORY;               <span class="cmt">// set once in constructor</span>
+
+  <span class="cmt">// ── MAPPING (key → value store) ──────────────────────────</span>
+  <span class="kw">mapping</span>(<span class="kw">address</span> => <span class="kw">uint256</span>) <span class="kw">public</span> balances;
+  <span class="kw">mapping</span>(<span class="kw">address</span> => <span class="kw">mapping</span>(<span class="kw">address</span> => <span class="kw">uint256</span>)) <span class="kw">public</span> allowances;
+
+  <span class="cmt">// ── ARRAYS ───────────────────────────────────────────────</span>
+  <span class="kw">uint256[]   public</span> dynamicArr;
+  <span class="kw">address</span>[<span class="num">3</span>] <span class="kw">public</span> fixedArr;
+
+  <span class="cmt">// ── STRUCT ───────────────────────────────────────────────</span>
+  <span class="kw">struct</span> <span class="ty">User</span> {
+    <span class="kw">address</span> wallet;
+    <span class="kw">uint256</span> balance;
+    <span class="kw">bool</span>    active;
+  }
+  <span class="ty">User</span>[] <span class="kw">public</span> users;
+
+  <span class="cmt">// ── ENUM ─────────────────────────────────────────────────</span>
+  <span class="kw">enum</span> <span class="ty">Status</span> { Pending, Active, Closed }  <span class="cmt">// 0, 1, 2</span>
+  <span class="ty">Status</span> <span class="kw">public</span> status = <span class="ty">Status</span>.Pending;
+
+  <span class="fn">constructor</span>() {
+    owner   = msg.sender;
+    FACTORY = msg.sender;
+  }
+
+  <span class="kw">function</span> <span class="fn">demonstrate</span>() <span class="kw">external</span> {
+    <span class="cmt">// ── LOCAL VARIABLES (memory — exist only in this call) ──</span>
+    <span class="kw">uint256</span> localNum   = <span class="num">42</span>;
+    <span class="kw">bool</span>    localFlag  = <span class="kw">true</span>;
+    <span class="kw">address</span> localAddr  = msg.sender;
+
+    <span class="cmt">// ── GLOBAL VARIABLES (injected by EVM) ──────────────────</span>
+    <span class="cmt">// msg.sender  — address that called this function</span>
+    <span class="cmt">// msg.value   — ETH sent with the call (in wei)</span>
+    <span class="cmt">// msg.data    — raw calldata bytes</span>
+    <span class="cmt">// block.timestamp  — current block's unix timestamp</span>
+    <span class="cmt">// block.number     — current block height</span>
+    <span class="cmt">// block.chainid    — network chain ID</span>
+    <span class="cmt">// tx.origin   — original EOA that started the tx chain</span>
+
+    <span class="kw">uint256</span> ts = block.timestamp;
+
+    <span class="cmt">// ── MEMORY for reference types ───────────────────────────</span>
+    <span class="kw">string memory</span>  greeting = <span class="str">"Hello"</span>;
+    <span class="kw">uint256[] memory</span> tmp   = <span class="kw">new</span> <span class="kw">uint256</span>[](<span class="num">3</span>);
+    tmp[<span class="num">0</span>] = <span class="num">1</span>; tmp[<span class="num">1</span>] = <span class="num">2</span>; tmp[<span class="num">2</span>] = <span class="num">3</span>;
+
+    <span class="cmt">// Use variables to avoid compiler warnings</span>
+    counter += localNum;
+    isActive = localFlag;
+    balances[localAddr] += ts;
+  }
+
+  <span class="kw">function</span> <span class="fn">addUser</span>(<span class="kw">address</span> _wallet, <span class="kw">uint256</span> _bal) <span class="kw">external</span> {
+    users.<span class="fn">push</span>(<span class="ty">User</span>({ wallet: _wallet, balance: _bal, active: <span class="kw">true</span> }));
+  }
+
+  <span class="kw">function</span> <span class="fn">calldataExample</span>(<span class="kw">string calldata</span> _name) <span class="kw">external pure returns</span> (<span class="kw">string calldata</span>) {
+    <span class="kw">return</span> _name;  <span class="cmt">// calldata: no copy, read-only, cheapest</span>
+  }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 12 — FUNCTIONS & MODIFIERS              -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s12">
+      <div class="section-badge">&#128296; Solidity</div>
+      <h2 class="section-title">12 — Functions &amp; Modifiers</h2>
+
+      <h3>Function visibility</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Keyword</th><th>Who can call it</th></tr></thead>
+          <tbody>
+            <tr><td><code>public</code></td><td>Anyone — externally and from within the contract</td></tr>
+            <tr><td><code>external</code></td><td>Only from outside the contract. Slightly cheaper than public for external calls.</td></tr>
+            <tr><td><code>internal</code></td><td>This contract and any contracts that inherit from it</td></tr>
+            <tr><td><code>private</code></td><td>Only this contract — not even child contracts</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>State mutability</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Keyword</th><th>Reads state?</th><th>Writes state?</th><th>ETH?</th><th>Gas cost?</th></tr></thead>
+          <tbody>
+            <tr><td><em>(none)</em></td><td>Yes</td><td>Yes</td><td>No</td><td>Yes (tx)</td></tr>
+            <tr><td><code>view</code></td><td>Yes</td><td>No</td><td>No</td><td>Free if called externally</td></tr>
+            <tr><td><code>pure</code></td><td>No</td><td>No</td><td>No</td><td>Free if called externally</td></tr>
+            <tr><td><code>payable</code></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes (tx)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Modifiers — reusable guards</h3>
+      <p>A <strong>modifier</strong> wraps a function with precondition checks. The <code>_;</code> placeholder is where the function body runs.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">FunctionsDemo.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="kw">contract</span> <span class="ty">FunctionsDemo</span> {
+  <span class="kw">address public</span> owner;
+  <span class="kw">uint256 public</span> balance;
+  <span class="kw">bool    public</span> paused;
+
+  <span class="fn">constructor</span>() { owner = msg.sender; }
+
+  <span class="cmt">// ── MODIFIERS ────────────────────────────────────────────</span>
+  <span class="kw">modifier</span> <span class="fn">onlyOwner</span>() {
+    <span class="fn">require</span>(msg.sender == owner, <span class="str">"Not owner"</span>);
+    _;
+  }
+
+  <span class="kw">modifier</span> <span class="fn">whenNotPaused</span>() {
+    <span class="fn">require</span>(!paused, <span class="str">"Contract is paused"</span>);
+    _;
+  }
+
+  <span class="kw">modifier</span> <span class="fn">validAmount</span>(<span class="kw">uint256</span> amount) {
+    <span class="fn">require</span>(amount > <span class="num">0</span>, <span class="str">"Amount must be > 0"</span>);
+    _;
+  }
+
+  <span class="cmt">// ── PAYABLE — receives ETH ───────────────────────────────</span>
+  <span class="kw">function</span> <span class="fn">deposit</span>() <span class="kw">external payable whenNotPaused</span> {
+    <span class="fn">require</span>(msg.value > <span class="num">0</span>, <span class="str">"Send some ETH"</span>);
+    balance += msg.value;
+  }
+
+  <span class="cmt">// ── STACK MODIFIERS — applied right to left ──────────────</span>
+  <span class="kw">function</span> <span class="fn">withdraw</span>(<span class="kw">uint256</span> amount)
+    <span class="kw">external</span>
+    <span class="fn">onlyOwner</span>
+    <span class="fn">whenNotPaused</span>
+    <span class="fn">validAmount</span>(amount)
+  {
+    <span class="fn">require</span>(balance >= amount, <span class="str">"Insufficient balance"</span>);
+    balance -= amount;
+    (<span class="kw">bool</span> ok,) = owner.<span class="fn">call</span>{value: amount}(<span class="str">""</span>);
+    <span class="fn">require</span>(ok, <span class="str">"Transfer failed"</span>);
+  }
+
+  <span class="cmt">// ── VIEW — reads state, no gas when called externally ────</span>
+  <span class="kw">function</span> <span class="fn">getBalance</span>() <span class="kw">external view returns</span> (<span class="kw">uint256</span>) {
+    <span class="kw">return</span> address(<span class="kw">this</span>).balance;
+  }
+
+  <span class="cmt">// ── PURE — no state access at all ───────────────────────</span>
+  <span class="kw">function</span> <span class="fn">add</span>(<span class="kw">uint256</span> a, <span class="kw">uint256</span> b) <span class="kw">external pure returns</span> (<span class="kw">uint256</span>) {
+    <span class="kw">return</span> a + b;
+  }
+
+  <span class="cmt">// ── MULTIPLE RETURN VALUES ───────────────────────────────</span>
+  <span class="kw">function</span> <span class="fn">getInfo</span>() <span class="kw">external view returns</span> (<span class="kw">address</span>, <span class="kw">uint256</span>, <span class="kw">bool</span>) {
+    <span class="kw">return</span> (owner, balance, paused);
+  }
+
+  <span class="cmt">// ── INTERNAL — only callable from within contract ────────</span>
+  <span class="kw">function</span> <span class="fn">_authorise</span>(<span class="kw">address</span> caller) <span class="kw">internal view</span> {
+    <span class="fn">require</span>(caller == owner, <span class="str">"Unauthorised"</span>);
+  }
+
+  <span class="cmt">// ── SPECIAL FUNCTIONS ────────────────────────────────────</span>
+  <span class="cmt">// receive() — called when ETH is sent with no calldata</span>
+  <span class="kw">receive</span>() <span class="kw">external payable</span> { balance += msg.value; }
+
+  <span class="cmt">// fallback() — called when no function signature matches</span>
+  <span class="kw">fallback</span>() <span class="kw">external payable</span> { }
+
+  <span class="cmt">// Owner-only pause toggle</span>
+  <span class="kw">function</span> <span class="fn">setPaused</span>(<span class="kw">bool</span> _p) <span class="kw">external</span> <span class="fn">onlyOwner</span> { paused = _p; }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 13 — EVENTS & ERRORS                    -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s13">
+      <div class="section-badge">&#128296; Solidity</div>
+      <h2 class="section-title">13 — Events &amp; Error Handling</h2>
+
+      <h3>Events</h3>
+      <p>Events write data to the transaction log — a cheap alternative to storage (8 gas/byte vs ~20,000 gas for a storage write). Your frontend listens for events using ethers.js. Indexed parameters can be filtered efficiently.</p>
+
+      <div class="callout info">
+        <div class="callout-icon">&#9432;</div>
+        <div class="callout-body">
+          <strong>Rule of thumb:</strong> emit an event every time state changes. Events are how your UI knows something happened on-chain, and they're essential for debugging and audit trails.
+        </div>
+      </div>
+
+      <h3>Error handling — three ways</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Method</th><th>Gas refund?</th><th>Custom message?</th><th>Use when</th></tr></thead>
+          <tbody>
+            <tr><td><code>require(cond, msg)</code></td><td>Yes (unused gas)</td><td>String</td><td>Input validation, preconditions</td></tr>
+            <tr><td><code>revert CustomError()</code></td><td>Yes</td><td>Typed + data</td><td>Best practice — gas-efficient, ABI-decodable</td></tr>
+            <tr><td><code>assert(cond)</code></td><td>No</td><td>No</td><td>Internal invariants that should <em>never</em> fail</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">EventsAndErrors.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="kw">contract</span> <span class="ty">EventsAndErrors</span> {
+
+  <span class="cmt">// ── CUSTOM ERRORS (cheaper than string revert) ───────────</span>
+  <span class="kw">error</span> <span class="ty">NotOwner</span>(<span class="kw">address</span> caller);
+  <span class="kw">error</span> <span class="ty">InsufficientBalance</span>(<span class="kw">uint256</span> have, <span class="kw">uint256</span> need);
+  <span class="kw">error</span> <span class="ty">ZeroAddress</span>();
+
+  <span class="cmt">// ── EVENTS ───────────────────────────────────────────────</span>
+  <span class="cmt">// indexed fields are searchable / filterable in logs</span>
+  <span class="kw">event</span> <span class="ty">Transfer</span>(<span class="kw">address indexed</span> from, <span class="kw">address indexed</span> to, <span class="kw">uint256</span> amount);
+  <span class="kw">event</span> <span class="ty">OwnerChanged</span>(<span class="kw">address indexed</span> oldOwner, <span class="kw">address indexed</span> newOwner);
+  <span class="kw">event</span> <span class="ty">Deposited</span>(<span class="kw">address indexed</span> who, <span class="kw">uint256</span> amount, <span class="kw">uint256</span> timestamp);
+
+  <span class="kw">address public</span> owner;
+  <span class="kw">mapping</span>(<span class="kw">address</span> => <span class="kw">uint256</span>) <span class="kw">public</span> balances;
+
+  <span class="fn">constructor</span>() { owner = msg.sender; }
+
+  <span class="kw">function</span> <span class="fn">deposit</span>() <span class="kw">external payable</span> {
+    <span class="fn">require</span>(msg.value > <span class="num">0</span>, <span class="str">"Send ETH"</span>);          <span class="cmt">// classic require</span>
+    balances[msg.sender] += msg.value;
+    <span class="kw">emit</span> <span class="ty">Deposited</span>(msg.sender, msg.value, block.timestamp);
+  }
+
+  <span class="kw">function</span> <span class="fn">transfer</span>(<span class="kw">address</span> to, <span class="kw">uint256</span> amount) <span class="kw">external</span> {
+    <span class="kw">if</span> (to == address(<span class="num">0</span>)) <span class="kw">revert</span> <span class="ty">ZeroAddress</span>();     <span class="cmt">// custom error</span>
+    <span class="kw">if</span> (balances[msg.sender] < amount)
+      <span class="kw">revert</span> <span class="ty">InsufficientBalance</span>(balances[msg.sender], amount);
+
+    balances[msg.sender] -= amount;
+    balances[to]         += amount;
+    <span class="kw">emit</span> <span class="ty">Transfer</span>(msg.sender, to, amount);
+  }
+
+  <span class="kw">function</span> <span class="fn">setOwner</span>(<span class="kw">address</span> newOwner) <span class="kw">external</span> {
+    <span class="kw">if</span> (msg.sender != owner) <span class="kw">revert</span> <span class="ty">NotOwner</span>(msg.sender);
+    <span class="kw">if</span> (newOwner == address(<span class="num">0</span>)) <span class="kw">revert</span> <span class="ty">ZeroAddress</span>();
+    <span class="kw">emit</span> <span class="ty">OwnerChanged</span>(owner, newOwner);
+    owner = newOwner;
+  }
+
+  <span class="kw">function</span> <span class="fn">assertExample</span>(<span class="kw">uint256</span> a, <span class="kw">uint256</span> b) <span class="kw">external pure returns</span> (<span class="kw">uint256</span>) {
+    <span class="kw">uint256</span> result = a + b;
+    <span class="fn">assert</span>(result >= a); <span class="cmt">// internal invariant — overflow can't happen in 0.8+</span>
+    <span class="kw">return</span> result;
+  }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 14 — INHERITANCE & INTERFACES           -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s14">
+      <div class="section-badge">&#128296; Solidity</div>
+      <h2 class="section-title">14 — Inheritance &amp; Interfaces</h2>
+      <p>Solidity supports multiple inheritance. You can build complex contracts by composing small, audited base contracts — this is exactly how OpenZeppelin works.</p>
+
+      <h3>Interfaces</h3>
+      <p>An interface defines a contract's external API without any implementation. It lets different contracts communicate without knowing each other's internals — and is how token standards like ERC-20 work.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">interfaces/IERC20.sol (simplified)</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="kw">interface</span> <span class="ty">IERC20</span> {
+  <span class="kw">function</span> <span class="fn">totalSupply</span>() <span class="kw">external view returns</span> (<span class="kw">uint256</span>);
+  <span class="kw">function</span> <span class="fn">balanceOf</span>(<span class="kw">address</span> account) <span class="kw">external view returns</span> (<span class="kw">uint256</span>);
+  <span class="kw">function</span> <span class="fn">transfer</span>(<span class="kw">address</span> to, <span class="kw">uint256</span> amount) <span class="kw">external returns</span> (<span class="kw">bool</span>);
+  <span class="kw">function</span> <span class="fn">approve</span>(<span class="kw">address</span> spender, <span class="kw">uint256</span> amount) <span class="kw">external returns</span> (<span class="kw">bool</span>);
+  <span class="kw">function</span> <span class="fn">transferFrom</span>(<span class="kw">address</span> from, <span class="kw">address</span> to, <span class="kw">uint256</span> amount) <span class="kw">external returns</span> (<span class="kw">bool</span>);
+
+  <span class="kw">event</span> <span class="ty">Transfer</span>(<span class="kw">address indexed</span> from, <span class="kw">address indexed</span> to, <span class="kw">uint256</span> value);
+  <span class="kw">event</span> <span class="ty">Approval</span>(<span class="kw">address indexed</span> owner, <span class="kw">address indexed</span> spender, <span class="kw">uint256</span> value);
+}</code></pre>
+      </div>
+
+      <h3>Inheritance — base contracts &amp; overrides</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Ownable.sol + MyToken.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="cmt">// ── BASE CONTRACT ────────────────────────────────────────</span>
+<span class="kw">contract</span> <span class="ty">Ownable</span> {
+  <span class="kw">address public</span> owner;
+
+  <span class="kw">event</span> <span class="ty">OwnershipTransferred</span>(<span class="kw">address indexed</span> prev, <span class="kw">address indexed</span> next);
+
+  <span class="fn">constructor</span>() { owner = msg.sender; }
+
+  <span class="kw">modifier</span> <span class="fn">onlyOwner</span>() {
+    <span class="fn">require</span>(msg.sender == owner, <span class="str">"Not owner"</span>);
+    _;
+  }
+
+  <span class="kw">function</span> <span class="fn">transferOwnership</span>(<span class="kw">address</span> newOwner) <span class="kw">public virtual</span> <span class="fn">onlyOwner</span> {
+    <span class="fn">require</span>(newOwner != address(<span class="num">0</span>), <span class="str">"Zero address"</span>);
+    <span class="kw">emit</span> <span class="ty">OwnershipTransferred</span>(owner, newOwner);
+    owner = newOwner;
+  }
+}
+
+<span class="cmt">// ── ANOTHER BASE ─────────────────────────────────────────</span>
+<span class="kw">contract</span> <span class="ty">Pausable</span> <span class="kw">is</span> <span class="ty">Ownable</span> {
+  <span class="kw">bool public</span> paused;
+
+  <span class="kw">modifier</span> <span class="fn">whenNotPaused</span>() {
+    <span class="fn">require</span>(!paused, <span class="str">"Paused"</span>);
+    _;
+  }
+
+  <span class="kw">function</span> <span class="fn">pause</span>()   <span class="kw">external</span> <span class="fn">onlyOwner</span> { paused = <span class="kw">true</span>;  }
+  <span class="kw">function</span> <span class="fn">unpause</span>() <span class="kw">external</span> <span class="fn">onlyOwner</span> { paused = <span class="kw">false</span>; }
+}
+
+<span class="cmt">// ── CHILD — inherits from both via Pausable (which inherits Ownable)</span>
+<span class="kw">contract</span> <span class="ty">MyToken</span> <span class="kw">is</span> <span class="ty">Pausable</span> {
+  <span class="kw">mapping</span>(<span class="kw">address</span> => <span class="kw">uint256</span>) <span class="kw">public</span> balances;
+
+  <span class="fn">constructor</span>() {
+    balances[msg.sender] = <span class="num">1_000_000</span>;
+  }
+
+  <span class="kw">function</span> <span class="fn">transfer</span>(<span class="kw">address</span> to, <span class="kw">uint256</span> amount)
+    <span class="kw">external</span>
+    <span class="fn">whenNotPaused</span>     <span class="cmt">// from Pausable</span>
+  {
+    <span class="fn">require</span>(balances[msg.sender] >= amount);
+    balances[msg.sender] -= amount;
+    balances[to]         += amount;
+  }
+
+  <span class="cmt">// Override parent — add extra logic before transferring ownership</span>
+  <span class="kw">function</span> <span class="fn">transferOwnership</span>(<span class="kw">address</span> newOwner) <span class="kw">public override</span> <span class="fn">onlyOwner</span> {
+    <span class="fn">require</span>(balances[newOwner] > <span class="num">0</span>, <span class="str">"New owner must hold tokens"</span>);
+    <span class="kw">super</span>.<span class="fn">transferOwnership</span>(newOwner); <span class="cmt">// call parent implementation</span>
+  }
+}</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>Use OpenZeppelin instead of writing base contracts yourself.</strong>
+          In real projects replace hand-rolled <code>Ownable</code> / <code>Pausable</code> with <code>@openzeppelin/contracts/access/Ownable.sol</code> and <code>@openzeppelin/contracts/utils/Pausable.sol</code> — they are audited, gas-optimized, and maintained by a security-focused team.
+        </div>
+      </div>
+
+      <h3>Using an interface to call any ERC-20 token</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">TokenCaller.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="kw">import</span> <span class="str">"./interfaces/IERC20.sol"</span>;
+
+<span class="kw">contract</span> <span class="ty">TokenCaller</span> {
+  <span class="cmt">// Works with ANY ERC-20 token — USDC, DAI, WETH…</span>
+  <span class="kw">function</span> <span class="fn">getBalance</span>(<span class="kw">address</span> token, <span class="kw">address</span> user)
+    <span class="kw">external view returns</span> (<span class="kw">uint256</span>)
+  {
+    <span class="kw">return</span> <span class="ty">IERC20</span>(token).<span class="fn">balanceOf</span>(user);
+  }
+
+  <span class="kw">function</span> <span class="fn">sweepTokens</span>(<span class="kw">address</span> token, <span class="kw">address</span> to) <span class="kw">external</span> {
+    <span class="ty">IERC20</span> t      = <span class="ty">IERC20</span>(token);
+    <span class="kw">uint256</span> amount = t.<span class="fn">balanceOf</span>(address(<span class="kw">this</span>));
+    <span class="fn">require</span>(amount > <span class="num">0</span>, <span class="str">"Nothing to sweep"</span>);
+    t.<span class="fn">transfer</span>(to, amount);
+  }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 15 — COUNTER & STORAGE                   -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s15">
+      <div class="section-badge">&#128196; Smart Contracts</div>
+      <h2 class="section-title">15 — Counter &amp; Storage</h2>
+      <p>The simplest possible on-chain contract: a number persisted in <strong>contract storage</strong>, readable by anyone for free, writable only via transactions that cost gas.</p>
+      <p>Key concepts: state variables, <code>public</code> auto-getter, <code>require()</code> guard, <code>view</code> return function.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">contracts/Counter.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma</span> solidity ^<span class="num">0.8.20</span>;
+
+<span class="kw">contract</span> <span class="fn">Counter</span> {
+    <span class="kw">uint256 public</span> count; <span class="cmt">// auto-generates a free getter: counter.count()</span>
+
+    <span class="kw">function</span> <span class="fn">increment</span>() <span class="kw">external</span> {
+        count++;
+    }
+
+    <span class="kw">function</span> <span class="fn">decrement</span>() <span class="kw">external</span> {
+        <span class="fn">require</span>(count &gt; <span class="num">0</span>, <span class="str">"Counter: already zero"</span>);
+        count--;
+    }
+
+    <span class="kw">function</span> <span class="fn">reset</span>() <span class="kw">external</span> {
+        count = <span class="num">0</span>;
+    }
+
+    <span class="kw">function</span> <span class="fn">getCount</span>() <span class="kw">external view returns</span> (<span class="kw">uint256</span>) {
+        <span class="kw">return</span> count;
+    }
+}</code></pre>
+      </div>
+
+      <h3>Storing structured data</h3>
+      <p>Combine <code>struct</code> with <code>mapping</code> to store records keyed by address:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">contracts/Storage.sol — struct + mapping</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma</span> solidity ^<span class="num">0.8.20</span>;
+
+<span class="kw">contract</span> <span class="fn">Storage</span> {
+    <span class="kw">struct</span> Profile {
+        <span class="kw">string</span>  name;
+        <span class="kw">uint256</span> age;
+        <span class="kw">bool</span>    active;
+    }
+
+    <span class="kw">mapping</span>(<span class="kw">address</span> =&gt; Profile) <span class="kw">private</span> profiles;
+
+    <span class="kw">event</span> <span class="fn">ProfileUpdated</span>(<span class="kw">address indexed</span> user, <span class="kw">string</span> name);
+
+    <span class="kw">function</span> <span class="fn">setProfile</span>(<span class="kw">string calldata</span> name, <span class="kw">uint256</span> age) <span class="kw">external</span> {
+        profiles[msg.sender] = Profile({ name: name, age: age, active: <span class="kw">true</span> });
+        <span class="kw">emit</span> <span class="fn">ProfileUpdated</span>(msg.sender, name);
+    }
+
+    <span class="kw">function</span> <span class="fn">getProfile</span>(<span class="kw">address</span> user)
+        <span class="kw">external view returns</span> (<span class="kw">string memory</span>, <span class="kw">uint256</span>, <span class="kw">bool</span>)
+    {
+        Profile <span class="kw">storage</span> p = profiles[user];
+        <span class="kw">return</span> (p.name, p.age, p.active);
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 16 — SIMPLE BANK                         -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s16">
+      <div class="section-badge">&#128196; Smart Contracts</div>
+      <h2 class="section-title">16 — Simple Bank</h2>
+      <p>A contract that holds real ETH on behalf of users. Introduces <code>payable</code> functions, <code>msg.value</code>, and the critical <strong>checks-effects-interactions</strong> pattern.</p>
+
+      <div class="callout warn">
+        <div class="callout-icon">&#9888;</div>
+        <div class="callout-body">
+          <strong>Reentrancy rule</strong>
+          Always update state <em>before</em> sending ETH out. If you send first and then update balances, a malicious contract can re-enter your function before the balance is zeroed and drain all funds.
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">contracts/SimpleBank.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma</span> solidity ^<span class="num">0.8.20</span>;
+
+<span class="kw">contract</span> <span class="fn">SimpleBank</span> {
+    <span class="kw">mapping</span>(<span class="kw">address</span> =&gt; <span class="kw">uint256</span>) <span class="kw">private</span> balances;
+
+    <span class="kw">event</span> <span class="fn">Deposited</span>(<span class="kw">address indexed</span> user, <span class="kw">uint256</span> amount);
+    <span class="kw">event</span> <span class="fn">Withdrawn</span>(<span class="kw">address indexed</span> user, <span class="kw">uint256</span> amount);
+
+    <span class="cmt">// payable — function can receive ETH; msg.value is the amount sent</span>
+    <span class="kw">function</span> <span class="fn">deposit</span>() <span class="kw">external payable</span> {
+        <span class="fn">require</span>(msg.value &gt; <span class="num">0</span>, <span class="str">"Send ETH to deposit"</span>);
+        balances[msg.sender] += msg.value;
+        <span class="kw">emit</span> <span class="fn">Deposited</span>(msg.sender, msg.value);
+    }
+
+    <span class="kw">function</span> <span class="fn">withdraw</span>(<span class="kw">uint256</span> amount) <span class="kw">external</span> {
+        <span class="fn">require</span>(balances[msg.sender] &gt;= amount, <span class="str">"Insufficient balance"</span>); <span class="cmt">// CHECK</span>
+
+        balances[msg.sender] -= amount;                                       <span class="cmt">// EFFECT — update before sending!</span>
+
+        (<span class="kw">bool</span> ok, ) = msg.sender.<span class="fn">call</span>{value: amount}(<span class="str">""</span>);                    <span class="cmt">// INTERACT last</span>
+        <span class="fn">require</span>(ok, <span class="str">"Transfer failed"</span>);
+        <span class="kw">emit</span> <span class="fn">Withdrawn</span>(msg.sender, amount);
+    }
+
+    <span class="kw">function</span> <span class="fn">getBalance</span>() <span class="kw">external view returns</span> (<span class="kw">uint256</span>) {
+        <span class="kw">return</span> balances[msg.sender];
+    }
+
+    <span class="kw">function</span> <span class="fn">contractBalance</span>() <span class="kw">external view returns</span> (<span class="kw">uint256</span>) {
+        <span class="kw">return</span> <span class="kw">address</span>(<span class="kw">this</span>).balance;
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 17 — ERC-20 TOKEN                        -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s17">
+      <div class="section-badge">&#128196; Smart Contracts</div>
+      <h2 class="section-title">17 — ERC-20 Token</h2>
+      <p><strong>ERC-20</strong> is the standard interface for fungible tokens — every unit is identical and interchangeable (like currency). MetaMask, Uniswap, and every DeFi protocol understand ERC-20 automatically because they all share the same ABI.</p>
+      <p>Use <strong>OpenZeppelin</strong>'s audited implementation instead of writing your own. Install it first:</p>
+
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <pre><span class="prompt">$ </span><span class="cmd">npm install @openzeppelin/contracts</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">contracts/MyToken.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma</span> solidity ^<span class="num">0.8.20</span>;
+
+<span class="kw">import</span> <span class="str">"@openzeppelin/contracts/token/ERC20/ERC20.sol"</span>;
+<span class="kw">import</span> <span class="str">"@openzeppelin/contracts/access/Ownable.sol"</span>;
+
+<span class="cmt">// Inherits the full ERC-20 standard + onlyOwner access control</span>
+<span class="kw">contract</span> <span class="fn">MyToken</span> <span class="kw">is</span> <span class="fn">ERC20</span>, <span class="fn">Ownable</span> {
+    <span class="kw">constructor</span>(<span class="kw">address</span> initialOwner)
+        <span class="fn">ERC20</span>(<span class="str">"MyToken"</span>, <span class="str">"MTK"</span>)
+        <span class="fn">Ownable</span>(initialOwner)
+    {
+        <span class="cmt">// Mint 1,000,000 MTK to deployer (18 decimal places by default)</span>
+        <span class="fn">_mint</span>(initialOwner, <span class="num">1_000_000</span> * <span class="num">10</span> ** <span class="fn">decimals</span>());
+    }
+
+    <span class="cmt">// Only owner can create new tokens</span>
+    <span class="kw">function</span> <span class="fn">mint</span>(<span class="kw">address</span> to, <span class="kw">uint256</span> amount) <span class="kw">external</span> onlyOwner {
+        <span class="fn">_mint</span>(to, amount);
+    }
+
+    <span class="cmt">// Anyone can burn their own tokens (reduces total supply)</span>
+    <span class="kw">function</span> <span class="fn">burn</span>(<span class="kw">uint256</span> amount) <span class="kw">external</span> {
+        <span class="fn">_burn</span>(msg.sender, amount);
+    }
+}
+
+<span class="cmt">// What ERC20 gives you for free:
+// balanceOf(address) → uint256
+// transfer(address to, uint256 amount) → bool
+// approve(address spender, uint256 amount) → bool
+// transferFrom(address from, address to, uint256 amount) → bool
+// allowance(address owner, address spender) → uint256
+// totalSupply() → uint256</span></code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 18 — ERC-721 NFT                         -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s18">
+      <div class="section-badge">&#128196; Smart Contracts</div>
+      <h2 class="section-title">18 — ERC-721 NFT</h2>
+      <p><strong>ERC-721</strong> is the standard for non-fungible tokens — each token has a unique <code>tokenId</code> and points to distinct metadata (image, attributes) via a <code>tokenURI</code> that resolves to JSON on IPFS.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>ERC-20 (Fungible)</th><th>ERC-721 (NFT)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Interchangeable?</strong></td><td>Yes — 1 MTK = 1 MTK</td><td>No — token #1 ≠ token #2</td></tr>
+            <tr><td><strong>Identifier</strong></td><td>Balance (uint256 amount)</td><td>tokenId (unique per NFT)</td></tr>
+            <tr><td><strong>Metadata</strong></td><td>None</td><td><code>tokenURI(id)</code> → IPFS JSON</td></tr>
+            <tr><td><strong>Use case</strong></td><td>Currency, governance tokens</td><td>Art, game items, certificates</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">contracts/MyNFT.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma</span> solidity ^<span class="num">0.8.20</span>;
+
+<span class="kw">import</span> <span class="str">"@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol"</span>;
+<span class="kw">import</span> <span class="str">"@openzeppelin/contracts/access/Ownable.sol"</span>;
+
+<span class="kw">contract</span> <span class="fn">MyNFT</span> <span class="kw">is</span> <span class="fn">ERC721URIStorage</span>, <span class="fn">Ownable</span> {
+    <span class="kw">uint256 private</span> _nextTokenId;
+
+    <span class="kw">event</span> <span class="fn">Minted</span>(<span class="kw">address indexed</span> to, <span class="kw">uint256 indexed</span> tokenId, <span class="kw">string</span> uri);
+
+    <span class="kw">constructor</span>(<span class="kw">address</span> initialOwner)
+        <span class="fn">ERC721</span>(<span class="str">"MyNFT"</span>, <span class="str">"MNFT"</span>)
+        <span class="fn">Ownable</span>(initialOwner)
+    {}
+
+    <span class="cmt">// tokenURI points to JSON on IPFS:
+    // { "name": "...", "description": "...", "image": "ipfs://Qm..." }</span>
+    <span class="kw">function</span> <span class="fn">safeMint</span>(<span class="kw">address</span> to, <span class="kw">string memory</span> tokenURI)
+        <span class="kw">external</span>
+        onlyOwner
+        <span class="kw">returns</span> (<span class="kw">uint256</span>)
+    {
+        <span class="kw">uint256</span> tokenId = _nextTokenId++;
+        <span class="fn">_safeMint</span>(to, tokenId);
+        <span class="fn">_setTokenURI</span>(tokenId, tokenURI);
+        <span class="kw">emit</span> <span class="fn">Minted</span>(to, tokenId, tokenURI);
+        <span class="kw">return</span> tokenId;
+    }
+
+    <span class="kw">function</span> <span class="fn">totalSupply</span>() <span class="kw">external view returns</span> (<span class="kw">uint256</span>) {
+        <span class="kw">return</span> _nextTokenId;
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 19 — VOTING SYSTEM                       -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s19">
+      <div class="section-badge">&#128196; Smart Contracts</div>
+      <h2 class="section-title">19 — Voting System</h2>
+      <p>A <strong>ballot contract</strong> where a chairperson creates proposals, any address casts exactly one vote, and results are tallied on-chain. Demonstrates <code>struct</code>, dynamic arrays, and on-chain governance patterns.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">contracts/Ballot.sol</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma</span> solidity ^<span class="num">0.8.20</span>;
+
+<span class="kw">contract</span> <span class="fn">Ballot</span> {
+    <span class="kw">struct</span> Proposal {
+        <span class="kw">string</span>  name;
+        <span class="kw">uint256</span> voteCount;
+    }
+
+    <span class="kw">address public</span>  chairperson;
+    <span class="kw">bool public</span>     votingOpen;
+    Proposal[] <span class="kw">public</span> proposals;
+    <span class="kw">mapping</span>(<span class="kw">address</span> =&gt; <span class="kw">bool</span>) <span class="kw">public</span> hasVoted;
+
+    <span class="kw">event</span> <span class="fn">Voted</span>(<span class="kw">address indexed</span> voter, <span class="kw">uint256</span> proposalIndex);
+    <span class="kw">event</span> <span class="fn">VotingClosed</span>(<span class="kw">uint256</span> winnerIndex, <span class="kw">string</span> winnerName);
+
+    <span class="kw">modifier</span> <span class="fn">onlyChairperson</span>() {
+        <span class="fn">require</span>(msg.sender == chairperson, <span class="str">"Not chairperson"</span>);
+        _;
+    }
+
+    <span class="kw">constructor</span>(<span class="kw">string</span>[] <span class="kw">memory</span> proposalNames) {
+        chairperson = msg.sender;
+        votingOpen  = <span class="kw">true</span>;
+        <span class="kw">for</span> (<span class="kw">uint256</span> i = <span class="num">0</span>; i &lt; proposalNames.length; i++) {
+            proposals.<span class="fn">push</span>(Proposal({ name: proposalNames[i], voteCount: <span class="num">0</span> }));
+        }
+    }
+
+    <span class="kw">function</span> <span class="fn">vote</span>(<span class="kw">uint256</span> proposalIndex) <span class="kw">external</span> {
+        <span class="fn">require</span>(votingOpen, <span class="str">"Voting is closed"</span>);
+        <span class="fn">require</span>(!hasVoted[msg.sender], <span class="str">"Already voted"</span>);
+        <span class="fn">require</span>(proposalIndex &lt; proposals.length, <span class="str">"Invalid proposal"</span>);
+
+        hasVoted[msg.sender] = <span class="kw">true</span>;
+        proposals[proposalIndex].voteCount++;
+        <span class="kw">emit</span> <span class="fn">Voted</span>(msg.sender, proposalIndex);
+    }
+
+    <span class="kw">function</span> <span class="fn">closeVoting</span>() <span class="kw">external</span> <span class="fn">onlyChairperson</span> {
+        votingOpen = <span class="kw">false</span>;
+        <span class="kw">uint256</span> winIdx = <span class="fn">_winningIndex</span>();
+        <span class="kw">emit</span> <span class="fn">VotingClosed</span>(winIdx, proposals[winIdx].name);
+    }
+
+    <span class="kw">function</span> <span class="fn">winner</span>() <span class="kw">external view returns</span> (<span class="kw">string memory</span>) {
+        <span class="kw">return</span> proposals[<span class="fn">_winningIndex</span>()].name;
+    }
+
+    <span class="kw">function</span> <span class="fn">_winningIndex</span>() <span class="kw">internal view returns</span> (<span class="kw">uint256</span> winIdx) {
+        <span class="kw">uint256</span> maxVotes;
+        <span class="kw">for</span> (<span class="kw">uint256</span> i = <span class="num">0</span>; i &lt; proposals.length; i++) {
+            <span class="kw">if</span> (proposals[i].voteCount &gt; maxVotes) {
+                maxVotes = proposals[i].voteCount;
+                winIdx   = i;
+            }
+        }
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 20 — PROVIDER & SIGNER                   -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s20">
+      <div class="section-badge">&#9881; Node.js + ethers.js</div>
+      <h2 class="section-title">20 — Provider &amp; Signer</h2>
+      <p>In ethers.js v6, every interaction with the blockchain starts with two objects:</p>
+      <ul>
+        <li><strong>Provider</strong> — read-only connection. Can query blocks, balances, and call <code>view</code> functions. No private key needed.</li>
+        <li><strong>Signer</strong> — wraps a private key around a provider. Can sign and broadcast transactions that cost gas.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">scripts/provider.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+
+<span class="cmt">// Read-only connection via Alchemy / Infura RPC URL</span>
+<span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(process.env.SEPOLIA_RPC_URL);
+
+<span class="cmt">// Wallet = private key + provider → can sign transactions</span>
+<span class="kw">const</span> signer = <span class="kw">new</span> ethers.<span class="fn">Wallet</span>(process.env.PRIVATE_KEY, provider);
+
+<span class="kw">async function</span> <span class="fn">main</span>() {
+    <span class="kw">const</span> network = <span class="kw">await</span> provider.<span class="fn">getNetwork</span>();
+    console.<span class="fn">log</span>(<span class="str">`Network:      <span class="op">${</span>network.name<span class="op">}</span>  (chain <span class="op">${</span>network.chainId<span class="op">}</span>)`</span>);
+
+    <span class="kw">const</span> block = <span class="kw">await</span> provider.<span class="fn">getBlockNumber</span>();
+    console.<span class="fn">log</span>(<span class="str">`Block:        <span class="op">${</span>block<span class="op">}</span>`</span>);
+
+    <span class="kw">const</span> balance = <span class="kw">await</span> provider.<span class="fn">getBalance</span>(signer.address);
+    console.<span class="fn">log</span>(<span class="str">`Balance:      <span class="op">${</span>ethers.<span class="fn">formatEther</span>(balance)<span class="op">}</span> ETH`</span>);
+    console.<span class="fn">log</span>(<span class="str">`Address:      <span class="op">${</span>signer.address<span class="op">}</span>`</span>);
+
+    <span class="kw">const</span> feeData = <span class="kw">await</span> provider.<span class="fn">getFeeData</span>();
+    console.<span class="fn">log</span>(<span class="str">`Gas price:    <span class="op">${</span>ethers.<span class="fn">formatUnits</span>(feeData.gasPrice, <span class="str">'gwei'</span>)<span class="op">}</span> gwei`</span>);
+}
+
+<span class="fn">main</span>().<span class="fn">catch</span>(console.error);</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 21 — READ & WRITE CONTRACT               -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s21">
+      <div class="section-badge">&#9881; Node.js + ethers.js</div>
+      <h2 class="section-title">21 — Read &amp; Write Contract</h2>
+      <p>Attach a deployed contract address + ABI to a signer and you can call its functions from Node.js. <strong>Read</strong> calls (<code>view</code>/<code>pure</code>) are free and instant. <strong>Write</strong> calls send a transaction, cost gas, and need to be awaited for confirmation.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">scripts/interact.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+
+<span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(process.env.SEPOLIA_RPC_URL);
+<span class="kw">const</span> signer   = <span class="kw">new</span> ethers.<span class="fn">Wallet</span>(process.env.PRIVATE_KEY, provider);
+
+<span class="kw">const</span> ADDRESS = <span class="str">'0xYourDeployedCounterAddress'</span>;
+
+<span class="cmt">// Human-readable ABI — list only the functions you call</span>
+<span class="kw">const</span> ABI = [
+    <span class="str">'function count() view returns (uint256)'</span>,
+    <span class="str">'function increment() external'</span>,
+    <span class="str">'function decrement() external'</span>,
+    <span class="str">'function reset() external'</span>,
+];
+
+<span class="kw">async function</span> <span class="fn">main</span>() {
+    <span class="cmt">// Pass signer → can read AND write</span>
+    <span class="kw">const</span> counter = <span class="kw">new</span> ethers.<span class="fn">Contract</span>(ADDRESS, ABI, signer);
+
+    <span class="cmt">// READ — calls view function, no gas, returns immediately</span>
+    <span class="kw">const</span> before = <span class="kw">await</span> counter.<span class="fn">count</span>();
+    console.<span class="fn">log</span>(<span class="str">`Count before: <span class="op">${</span>before.<span class="fn">toString</span>()<span class="op">}</span>`</span>);
+
+    <span class="cmt">// WRITE — broadcasts a transaction to the network</span>
+    <span class="kw">const</span> tx = <span class="kw">await</span> counter.<span class="fn">increment</span>();
+    console.<span class="fn">log</span>(<span class="str">`Tx sent:      <span class="op">${</span>tx.hash<span class="op">}</span>`</span>);
+
+    <span class="cmt">// Wait 1 block confirmation before reading the new state</span>
+    <span class="kw">const</span> receipt = <span class="kw">await</span> tx.<span class="fn">wait</span>();
+    console.<span class="fn">log</span>(<span class="str">`Confirmed in block <span class="op">${</span>receipt.blockNumber<span class="op">}</span> | gas used: <span class="op">${</span>receipt.gasUsed<span class="op">}</span>`</span>);
+
+    <span class="kw">const</span> after = <span class="kw">await</span> counter.<span class="fn">count</span>();
+    console.<span class="fn">log</span>(<span class="str">`Count after:  <span class="op">${</span>after.<span class="fn">toString</span>()<span class="op">}</span>`</span>);
+}
+
+<span class="fn">main</span>().<span class="fn">catch</span>(console.error);</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 22 — EVENTS & FILTERS                    -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s22">
+      <div class="section-badge">&#9881; Node.js + ethers.js</div>
+      <h2 class="section-title">22 — Events &amp; Filters</h2>
+      <p>Contract events are stored in transaction receipts (not storage), cost ~375 gas per indexed topic, and can be streamed in real time or queried historically. Use them for transaction history, UI updates, and off-chain indexing.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">scripts/events.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+
+<span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(process.env.SEPOLIA_RPC_URL);
+<span class="kw">const</span> signer   = <span class="kw">new</span> ethers.<span class="fn">Wallet</span>(process.env.PRIVATE_KEY, provider);
+
+<span class="kw">const</span> BANK_ADDRESS = <span class="str">'0xYourSimpleBankAddress'</span>;
+<span class="kw">const</span> ABI = [
+    <span class="str">'event Deposited(address indexed user, uint256 amount)'</span>,
+    <span class="str">'event Withdrawn(address indexed user, uint256 amount)'</span>,
+    <span class="str">'function deposit() external payable'</span>,
+];
+
+<span class="kw">async function</span> <span class="fn">main</span>() {
+    <span class="kw">const</span> bank = <span class="kw">new</span> ethers.<span class="fn">Contract</span>(BANK_ADDRESS, ABI, signer);
+
+    <span class="cmt">// ── Real-time listener (fires whenever the event is emitted) ───</span>
+    bank.<span class="fn">on</span>(<span class="str">'Deposited'</span>, (user, amount, event) =&gt; {
+        console.<span class="fn">log</span>(<span class="str">`[LIVE] <span class="op">${</span>user<span class="op">}</span> deposited <span class="op">${</span>ethers.<span class="fn">formatEther</span>(amount)<span class="op">}</span> ETH`</span>);
+        console.<span class="fn">log</span>(<span class="str">`       tx: <span class="op">${</span>event.log.transactionHash<span class="op">}</span>`</span>);
+    });
+
+    <span class="cmt">// ── Query past events (last 500 blocks) ───────────────────────</span>
+    <span class="kw">const</span> latest   = <span class="kw">await</span> provider.<span class="fn">getBlockNumber</span>();
+    <span class="kw">const</span> myFilter = bank.filters.<span class="fn">Deposited</span>(signer.address); <span class="cmt">// indexed filter</span>
+
+    <span class="kw">const</span> logs = <span class="kw">await</span> bank.<span class="fn">queryFilter</span>(myFilter, latest - <span class="num">500</span>, latest);
+    console.<span class="fn">log</span>(<span class="str">`Found <span class="op">${</span>logs.length<span class="op">}</span> past deposits by <span class="op">${</span>signer.address<span class="op">}</span>`</span>);
+
+    <span class="kw">for</span> (<span class="kw">const</span> log <span class="kw">of</span> logs) {
+        <span class="kw">const</span> { user, amount } = log.args;
+        console.<span class="fn">log</span>(<span class="str">`  Block <span class="op">${</span>log.blockNumber<span class="op">}</span>: <span class="op">${</span>ethers.<span class="fn">formatEther</span>(amount)<span class="op">}</span> ETH`</span>);
+    }
+
+    <span class="cmt">// Trigger a deposit — the live listener will fire</span>
+    <span class="kw">const</span> tx = <span class="kw">await</span> bank.<span class="fn">deposit</span>({ value: ethers.<span class="fn">parseEther</span>(<span class="str">'0.001'</span>) });
+    <span class="kw">await</span> tx.<span class="fn">wait</span>();
+}
+
+<span class="fn">main</span>().<span class="fn">catch</span>(console.error);</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 23 — WRITING TESTS                       -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s23">
+      <div class="section-badge">&#128640; Testing &amp; Deploy</div>
+      <h2 class="section-title">23 — Writing Tests</h2>
+      <p>Hardhat runs a local in-memory EVM for tests — no real gas, instant confirmations, unlimited accounts. Tests use <strong>Mocha</strong> (runner), <strong>Chai</strong> (assertions), and <strong>hardhat-chai-matchers</strong> for blockchain-specific assertions like <code>revertedWith</code> and <code>emit</code>.</p>
+
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <pre><span class="prompt">$ </span><span class="cmd">npx hardhat test</span>
+<span class="out">  Counter
+    increment
+      ✔ starts at zero
+      ✔ increases count by 1
+    decrement
+      ✔ reverts when count is zero
+
+  3 passing (812ms)</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">test/Counter.test.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { expect } = <span class="fn">require</span>(<span class="str">'chai'</span>);
+<span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'hardhat'</span>);
+
+<span class="fn">describe</span>(<span class="str">'Counter'</span>, <span class="kw">function</span> () {
+    <span class="kw">let</span> counter, owner, alice;
+
+    <span class="fn">beforeEach</span>(<span class="kw">async function</span> () {
+        [owner, alice] = <span class="kw">await</span> ethers.<span class="fn">getSigners</span>();
+        <span class="kw">const</span> Counter  = <span class="kw">await</span> ethers.<span class="fn">getContractFactory</span>(<span class="str">'Counter'</span>);
+        counter        = <span class="kw">await</span> Counter.<span class="fn">deploy</span>();
+    });
+
+    <span class="fn">describe</span>(<span class="str">'increment'</span>, <span class="kw">function</span> () {
+        <span class="fn">it</span>(<span class="str">'starts at zero'</span>, <span class="kw">async function</span> () {
+            <span class="fn">expect</span>(<span class="kw">await</span> counter.<span class="fn">count</span>()).<span class="fn">to</span>.<span class="fn">equal</span>(<span class="num">0</span>);
+        });
+
+        <span class="fn">it</span>(<span class="str">'increases count by 1'</span>, <span class="kw">async function</span> () {
+            <span class="kw">await</span> counter.<span class="fn">increment</span>();
+            <span class="fn">expect</span>(<span class="kw">await</span> counter.<span class="fn">count</span>()).<span class="fn">to</span>.<span class="fn">equal</span>(<span class="num">1</span>);
+        });
+
+        <span class="fn">it</span>(<span class="str">'can increment multiple times'</span>, <span class="kw">async function</span> () {
+            <span class="kw">await</span> counter.<span class="fn">increment</span>();
+            <span class="kw">await</span> counter.<span class="fn">increment</span>();
+            <span class="fn">expect</span>(<span class="kw">await</span> counter.<span class="fn">count</span>()).<span class="fn">to</span>.<span class="fn">equal</span>(<span class="num">2</span>);
+        });
+    });
+
+    <span class="fn">describe</span>(<span class="str">'decrement'</span>, <span class="kw">function</span> () {
+        <span class="fn">it</span>(<span class="str">'decreases count by 1'</span>, <span class="kw">async function</span> () {
+            <span class="kw">await</span> counter.<span class="fn">increment</span>();
+            <span class="kw">await</span> counter.<span class="fn">decrement</span>();
+            <span class="fn">expect</span>(<span class="kw">await</span> counter.<span class="fn">count</span>()).<span class="fn">to</span>.<span class="fn">equal</span>(<span class="num">0</span>);
+        });
+
+        <span class="fn">it</span>(<span class="str">'reverts when count is already zero'</span>, <span class="kw">async function</span> () {
+            <span class="kw">await</span> <span class="fn">expect</span>(counter.<span class="fn">decrement</span>())
+                .<span class="fn">to</span>.<span class="fn">be</span>.<span class="fn">revertedWith</span>(<span class="str">'Counter: already zero'</span>);
+        });
+    });
+
+    <span class="fn">describe</span>(<span class="str">'reset'</span>, <span class="kw">function</span> () {
+        <span class="fn">it</span>(<span class="str">'sets count to zero'</span>, <span class="kw">async function</span> () {
+            <span class="kw">await</span> counter.<span class="fn">increment</span>();
+            <span class="kw">await</span> counter.<span class="fn">increment</span>();
+            <span class="kw">await</span> counter.<span class="fn">reset</span>();
+            <span class="fn">expect</span>(<span class="kw">await</span> counter.<span class="fn">count</span>()).<span class="fn">to</span>.<span class="fn">equal</span>(<span class="num">0</span>);
+        });
+    });
+});</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">test/SimpleBank.test.js — ETH value + event assertions</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { expect } = <span class="fn">require</span>(<span class="str">'chai'</span>);
+<span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'hardhat'</span>);
+
+<span class="fn">describe</span>(<span class="str">'SimpleBank'</span>, <span class="kw">function</span> () {
+    <span class="kw">let</span> bank, owner, alice;
+    <span class="kw">const</span> ONE_ETH = ethers.<span class="fn">parseEther</span>(<span class="str">'1.0'</span>);
+
+    <span class="fn">beforeEach</span>(<span class="kw">async function</span> () {
+        [owner, alice] = <span class="kw">await</span> ethers.<span class="fn">getSigners</span>();
+        <span class="kw">const</span> Bank     = <span class="kw">await</span> ethers.<span class="fn">getContractFactory</span>(<span class="str">'SimpleBank'</span>);
+        bank           = <span class="kw">await</span> Bank.<span class="fn">deploy</span>();
+    });
+
+    <span class="fn">it</span>(<span class="str">'accepts deposits and tracks balances'</span>, <span class="kw">async function</span> () {
+        <span class="kw">await</span> bank.<span class="fn">connect</span>(alice).<span class="fn">deposit</span>({ value: ONE_ETH });
+        <span class="fn">expect</span>(<span class="kw">await</span> bank.<span class="fn">connect</span>(alice).<span class="fn">getBalance</span>()).<span class="fn">to</span>.<span class="fn">equal</span>(ONE_ETH);
+    });
+
+    <span class="fn">it</span>(<span class="str">'emits Deposited event with correct args'</span>, <span class="kw">async function</span> () {
+        <span class="kw">await</span> <span class="fn">expect</span>(bank.<span class="fn">connect</span>(alice).<span class="fn">deposit</span>({ value: ONE_ETH }))
+            .<span class="fn">to</span>.<span class="fn">emit</span>(bank, <span class="str">'Deposited'</span>)
+            .<span class="fn">withArgs</span>(alice.address, ONE_ETH);
+    });
+
+    <span class="fn">it</span>(<span class="str">'allows full withdrawal'</span>, <span class="kw">async function</span> () {
+        <span class="kw">await</span> bank.<span class="fn">connect</span>(alice).<span class="fn">deposit</span>({ value: ONE_ETH });
+        <span class="kw">await</span> bank.<span class="fn">connect</span>(alice).<span class="fn">withdraw</span>(ONE_ETH);
+        <span class="fn">expect</span>(<span class="kw">await</span> bank.<span class="fn">connect</span>(alice).<span class="fn">getBalance</span>()).<span class="fn">to</span>.<span class="fn">equal</span>(<span class="num">0</span>);
+    });
+
+    <span class="fn">it</span>(<span class="str">'reverts when withdrawing more than balance'</span>, <span class="kw">async function</span> () {
+        <span class="kw">await</span> <span class="fn">expect</span>(bank.<span class="fn">connect</span>(alice).<span class="fn">withdraw</span>(ONE_ETH))
+            .<span class="fn">to</span>.<span class="fn">be</span>.<span class="fn">revertedWith</span>(<span class="str">'Insufficient balance'</span>);
+    });
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 24 — DEPLOY TO TESTNET                   -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s24">
+      <div class="section-badge">&#128640; Testing &amp; Deploy</div>
+      <h2 class="section-title">24 — Deploy to Testnet</h2>
+      <p>Hardhat <strong>Ignition</strong> is the modern deployment system — declarative modules that track deployment state per network. Each contract is deployed once; re-running the same module on the same network is a no-op unless you explicitly force it.</p>
+
+      <h3>1. Update hardhat.config.js</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">hardhat.config.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="fn">require</span>(<span class="str">'@nomicfoundation/hardhat-toolbox'</span>);
+<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+
+module.exports = {
+    solidity: <span class="str">'0.8.20'</span>,
+    networks: {
+        hardhat: {},
+        sepolia: {
+            url:      process.env.SEPOLIA_RPC_URL,
+            accounts: [process.env.PRIVATE_KEY],
+        },
+    },
+    etherscan: {
+        apiKey: process.env.ETHERSCAN_API_KEY,
+    },
+};</code></pre>
+      </div>
+
+      <h3>2. Write an Ignition module</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">ignition/modules/Counter.js</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">const</span> { buildModule } = <span class="fn">require</span>(<span class="str">'@nomicfoundation/hardhat-ignition/modules'</span>);
+
+module.exports = <span class="fn">buildModule</span>(<span class="str">'CounterModule'</span>, (m) =&gt; {
+    <span class="kw">const</span> counter = m.<span class="fn">contract</span>(<span class="str">'Counter'</span>);
+    <span class="kw">return</span> { counter };
+});</code></pre>
+      </div>
+
+      <h3>3. Compile, test, deploy, verify</h3>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <pre><span class="comment"># Compile Solidity → ABI + bytecode in artifacts/</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat compile</span>
+
+<span class="comment"># Run all tests — never deploy untested code</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat test</span>
+
+<span class="comment"># Deploy to local Hardhat node (no real ETH needed)</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat ignition deploy ignition/modules/Counter.js</span>
+
+<span class="comment"># Deploy to Sepolia testnet (requires .env with SEPOLIA_RPC_URL + PRIVATE_KEY)</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat ignition deploy ignition/modules/Counter.js --network sepolia</span>
+
+<span class="comment"># Verify source code on Etherscan so anyone can read it</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat verify --network sepolia 0xYourDeployedContractAddress</span></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-body">
+          <strong>After verification</strong>
+          Your contract's source code appears on Etherscan under the "Contract" tab. Users can read state, call functions, and interact with it directly from the browser — no code needed on their end.
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SECTION 25 — SECURITY BEST PRACTICES             -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="section" id="s25">
+      <div class="section-badge">&#128274; Security</div>
+      <h2 class="section-title">25 — Security Best Practices</h2>
+      <p>Smart contracts are immutable once deployed and often hold real value. A single bug can drain all funds permanently with no recourse. These are the most critical vulnerabilities to understand before shipping any contract to mainnet.</p>
+
+      <h3>1. Reentrancy</h3>
+      <p>The most famous attack (used in the 2016 DAO hack that lost $60M). A malicious contract's <code>receive()</code> calls back into your contract before your state update runs, allowing it to repeatedly drain funds.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">&#10060; Vulnerable — state updated AFTER sending ETH</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">function</span> <span class="fn">withdraw</span>(<span class="kw">uint256</span> amount) <span class="kw">external</span> {
+    <span class="fn">require</span>(balances[msg.sender] &gt;= amount);
+    (<span class="kw">bool</span> ok, ) = msg.sender.<span class="fn">call</span>{value: amount}(<span class="str">""</span>); <span class="cmt">// ← attacker re-enters here</span>
+    <span class="fn">require</span>(ok);
+    balances[msg.sender] -= amount; <span class="cmt">// ← never reached during re-entry</span>
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">&#10003; Safe — Checks → Effects → Interactions</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">function</span> <span class="fn">withdraw</span>(<span class="kw">uint256</span> amount) <span class="kw">external</span> {
+    <span class="fn">require</span>(balances[msg.sender] &gt;= amount);  <span class="cmt">// CHECK</span>
+    balances[msg.sender] -= amount;            <span class="cmt">// EFFECT — update state first</span>
+    (<span class="kw">bool</span> ok, ) = msg.sender.<span class="fn">call</span>{value: amount}(<span class="str">""</span>); <span class="cmt">// INTERACT last</span>
+    <span class="fn">require</span>(ok);
+}
+
+<span class="cmt">// Alternative: OpenZeppelin's ReentrancyGuard
+// import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+// contract MyBank is ReentrancyGuard {
+//     function withdraw(...) external nonReentrant { ... }
+// }</span></code></pre>
+      </div>
+
+      <h3>2. Access Control</h3>
+      <p>Functions that mint tokens, upgrade contracts, or withdraw funds must be restricted. Never leave privileged functions unprotected.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">Access control with modifier + OpenZeppelin Ownable</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">import</span> <span class="str">"@openzeppelin/contracts/access/Ownable.sol"</span>;
+
+<span class="kw">contract</span> <span class="fn">Vault</span> <span class="kw">is</span> <span class="fn">Ownable</span> {
+    <span class="kw">mapping</span>(<span class="kw">address</span> =&gt; <span class="kw">bool</span>) <span class="kw">public</span> admins;
+
+    <span class="kw">modifier</span> <span class="fn">onlyAdmin</span>() {
+        <span class="fn">require</span>(admins[msg.sender] || msg.sender == <span class="fn">owner</span>(), <span class="str">"Not admin"</span>);
+        _;
+    }
+
+    <span class="kw">function</span> <span class="fn">addAdmin</span>(<span class="kw">address</span> addr) <span class="kw">external</span> onlyOwner {
+        admins[addr] = <span class="kw">true</span>;
+    }
+
+    <span class="kw">function</span> <span class="fn">sensitiveAction</span>() <span class="kw">external</span> <span class="fn">onlyAdmin</span> {
+        <span class="cmt">// only owner or approved admins can call this</span>
+    }
+}</code></pre>
+      </div>
+
+      <h3>3. tx.origin vs msg.sender</h3>
+      <p><code>tx.origin</code> is always the original EOA that started the transaction chain. A phishing contract can trick a user into calling it, and that contract can then call your contract — <code>tx.origin</code> will still be the victim's address, bypassing your check.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">tx.origin phishing vs msg.sender</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cmt">// ❌ WRONG — phishing contract passes this check</span>
+<span class="kw">function</span> <span class="fn">withdraw</span>() <span class="kw">external</span> {
+    <span class="fn">require</span>(tx.origin == owner, <span class="str">"Not owner"</span>);
+}
+
+<span class="cmt">// ✅ CORRECT — msg.sender is always the direct caller</span>
+<span class="kw">function</span> <span class="fn">withdraw</span>() <span class="kw">external</span> {
+    <span class="fn">require</span>(msg.sender == owner, <span class="str">"Not owner"</span>);
+}</code></pre>
+      </div>
+
+      <h3>4. Integer overflow</h3>
+      <p>Solidity <code>^0.8.0</code> reverts automatically on overflow and underflow. If you need unchecked math for gas optimization, use <code>unchecked {}</code> only where you can prove overflow is impossible.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
+          <span class="code-lang">overflow in Solidity 0.8+</span>
+          <button class="copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">uint256</span> x = <span class="kw">type</span>(<span class="kw">uint256</span>).<span class="kw">max</span>; <span class="cmt">// 2^256 − 1</span>
+x++; <span class="cmt">// ← reverts automatically in ^0.8.0 (no silent wrap-around)</span>
+
+<span class="cmt">// Use unchecked{} only when you are certain overflow cannot happen</span>
+<span class="kw">unchecked</span> {
+    <span class="kw">for</span> (<span class="kw">uint256</span> i = <span class="num">0</span>; i &lt; arr.length; i++) {
+        <span class="cmt">// loop counter will never overflow in practice</span>
+    }
+}</code></pre>
+      </div>
+
+      <h3>Pre-mainnet checklist</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Check</th><th>How to satisfy it</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Reentrancy guards on all withdraw paths</strong></td><td>CEI pattern or <code>ReentrancyGuard</code></td></tr>
+            <tr><td><strong>All privileged functions restricted</strong></td><td><code>onlyOwner</code> / <code>onlyRole</code> modifiers</td></tr>
+            <tr><td><strong>No <code>tx.origin</code> auth</strong></td><td>Always use <code>msg.sender</code></td></tr>
+            <tr><td><strong>Solidity 0.8.x</strong></td><td>Overflow protection built-in</td></tr>
+            <tr><td><strong>Test coverage &gt; 90%</strong></td><td><code>npx hardhat coverage</code></td></tr>
+            <tr><td><strong>Third-party audit before significant value</strong></td><td>Trail of Bits, OpenZeppelin, Code4rena</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">&#9432;</div>
+        <div class="callout-body">
+          <strong>Tools for automated scanning</strong>
+          <a href="https://github.com/crytic/slither" target="_blank">Slither</a> (static analyzer) and <a href="https://mythx.io" target="_blank">MythX</a> can catch common vulnerabilities automatically before you submit for a manual audit. Run <code>slither .</code> in your Hardhat project after <code>pip install slither-analyzer</code>.
+        </div>
+      </div>
+    </section>
+    <!-- END SECTIONS 15–25 -->
+
+  </main><!-- /main -->
+</div><!-- /layout -->
+
+<footer>
+  Blockchain &amp; Ethereum — Complete Developer Guide &nbsp;·&nbsp; Built for learning &nbsp;·&nbsp; 2026
+</footer>
+
+<!-- ════ SCRIPTS ════════════════════════════════════════ -->
+<script>
+  /* ── Copy button ── */
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'copied!';
+      btn.style.color = '#3fb950';
+      setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1600);
+    });
+  }
+
+  /* ── Scroll progress bar ── */
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
+    document.getElementById('progress-fill').style.width = (scrolled * 100) + '%';
+  });
+
+  /* ── Active nav link on scroll ── */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks  = document.querySelectorAll('.nav-link');
+  const observer  = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const a = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+        if (a) {
+          a.classList.add('active');
+          a.scrollIntoView({ block: 'nearest' });
+        }
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
