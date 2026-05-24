@@ -546,8 +546,8 @@
       <div class="card-grid">
         <div class="card">
           <div class="card-icon">&#128187;</div>
-          <div class="card-title">JavaScript / Node.js</div>
-          <p>All scripts, tests, and tooling in this guide are written in JavaScript. Async/await and promises are used heavily.</p>
+          <div class="card-title">TypeScript / Node.js</div>
+          <p>All scripts, tests, and tooling in this guide are written in TypeScript. Async/await, promises, and static typing are used heavily.</p>
         </div>
         <div class="card">
           <div class="card-icon">&#128279;</div>
@@ -622,11 +622,11 @@
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
           <span class="terminal-title">terminal</span>
         </div>
-        <pre><span class="prompt">$ </span><span class="cmd">npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox</span>
+        <pre><span class="prompt">$ </span><span class="cmd">npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox-mocha-ethers typescript ts-node @types/node</span>
 <span class="prompt">$ </span><span class="cmd">npm install ethers dotenv</span>
 <span class="prompt">$ </span><span class="cmd">npm install --save-dev @openzeppelin/contracts</span>
 
-<span class="comment"># Initialize Hardhat — choose "Create a JavaScript project"</span>
+<span class="comment"># Initialize Hardhat — choose "Create a TypeScript project"</span>
 <span class="prompt">$ </span><span class="cmd">npx hardhat init</span>
 <span class="out">888    888                      888 888               888
 888    888                      888 888               888
@@ -637,7 +637,7 @@
 888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.
 888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888
 
-? What do you want to do? › Create a JavaScript project</span></pre>
+? What do you want to do? › Create a TypeScript project</span></pre>
       </div>
 
       <div class="steps">
@@ -798,13 +798,13 @@ typechain-types/</code></pre>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">hash-demo.js</span>
+          <span class="code-lang">hash-demo.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+        <pre><code><span class="kw">import</span> { <span class="fn">createHash</span> } <span class="kw">from</span> <span class="str">'node:crypto'</span>;
 
-<span class="kw">function</span> <span class="fn">sha256</span>(input) {
-  <span class="kw">return</span> crypto.<span class="fn">createHash</span>(<span class="str">'sha256'</span>)
+<span class="kw">function</span> <span class="fn">sha256</span>(input<span class="op">:</span> <span class="ty">string</span>)<span class="op">:</span> <span class="ty">string</span> {
+  <span class="kw">return</span> <span class="fn">createHash</span>(<span class="str">'sha256'</span>)
                .<span class="fn">update</span>(input)
                .<span class="fn">digest</span>(<span class="str">'hex'</span>);
 }
@@ -822,7 +822,7 @@ console.<span class="fn">log</span>(<span class="fn">sha256</span>(<span class="
 <span class="cmt">// always exactly 64 hex characters</span>
 
 <span class="cmt">// Ethereum-style hashing with ethers.js</span>
-<span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+<span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'ethers'</span>;
 
 <span class="kw">const</span> data = ethers.<span class="fn">toUtf8Bytes</span>(<span class="str">'Hello Ethereum'</span>);
 console.<span class="fn">log</span>(<span class="str">'keccak256:'</span>, ethers.<span class="fn">keccak256</span>(data));
@@ -853,16 +853,16 @@ console.<span class="fn">log</span>(<span class="str">'keccak256:'</span>, ether
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">merkle-tree.js</span>
+          <span class="code-lang">merkle-tree.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+        <pre><code><span class="kw">import</span> { <span class="fn">createHash</span> } <span class="kw">from</span> <span class="str">'node:crypto'</span>;
 
-<span class="kw">function</span> <span class="fn">hash</span>(data) {
-  <span class="kw">return</span> crypto.<span class="fn">createHash</span>(<span class="str">'sha256'</span>).<span class="fn">update</span>(data).<span class="fn">digest</span>(<span class="str">'hex'</span>);
+<span class="kw">function</span> <span class="fn">hash</span>(data<span class="op">:</span> <span class="ty">string</span>)<span class="op">:</span> <span class="ty">string</span> {
+  <span class="kw">return</span> <span class="fn">createHash</span>(<span class="str">'sha256'</span>).<span class="fn">update</span>(data).<span class="fn">digest</span>(<span class="str">'hex'</span>);
 }
 
-<span class="kw">function</span> <span class="fn">buildMerkleRoot</span>(transactions) {
+<span class="kw">function</span> <span class="fn">buildMerkleRoot</span>(transactions<span class="op">:</span> <span class="ty">Record</span>&lt;<span class="ty">string</span>, <span class="ty">unknown</span>&gt;[])<span class="op">:</span> <span class="ty">string</span> {
   <span class="kw">if</span> (transactions.length === <span class="num">0</span>) <span class="kw">return</span> <span class="fn">hash</span>(<span class="str">''</span>);
 
   <span class="cmt">// Hash each transaction</span>
@@ -955,12 +955,12 @@ console.<span class="fn">log</span>(<span class="str">'Merkle Root:'</span>, <sp
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">proof-of-work.js — mining simulation</span>
+          <span class="code-lang">proof-of-work.ts — mining simulation</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+        <pre><code><span class="kw">import</span> { <span class="fn">createHash</span> } <span class="kw">from</span> <span class="str">'node:crypto'</span>;
 
-<span class="kw">function</span> <span class="fn">mineBlock</span>(data, difficulty) {
+<span class="kw">function</span> <span class="fn">mineBlock</span>(data<span class="op">:</span> <span class="ty">string</span>, difficulty<span class="op">:</span> <span class="ty">number</span>)<span class="op">:</span> <span class="ty">void</span> {
   <span class="kw">const</span> target = <span class="str">'0'</span>.<span class="fn">repeat</span>(difficulty); <span class="cmt">// e.g. "0000"</span>
   <span class="kw">let</span> nonce = <span class="num">0</span>;
   <span class="kw">let</span> hash  = <span class="str">''</span>;
@@ -1007,19 +1007,16 @@ console.<span class="fn">log</span>(<span class="str">'Merkle Root:'</span>, <sp
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">proof-of-stake.js — validator selection &amp; slashing simulation</span>
+          <span class="code-lang">proof-of-stake.ts — validator selection &amp; slashing simulation</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+        <pre><code><span class="kw">import</span> { <span class="fn">createHash</span> } <span class="kw">from</span> <span class="str">'node:crypto'</span>;
 
 <span class="cmt">// Each validator has a name and a stake (ETH locked as collateral).
 // More stake = larger share of totalStake = higher selection chance.
 // On Ethereum mainnet the minimum is 32 ETH per validator.</span>
-<span class="kw">class</span> <span class="fn">Validator</span> {
-  <span class="fn">constructor</span>(name, stake) {
-    <span class="kw">this</span>.name  = name;
-    <span class="kw">this</span>.stake = stake;
-  }
+<span class="kw">class</span> <span class="ty">Validator</span> {
+  <span class="fn">constructor</span>(<span class="kw">public</span> name<span class="op">:</span> <span class="ty">string</span>, <span class="kw">public</span> stake<span class="op">:</span> <span class="ty">number</span>) {}
 }
 
 <span class="cmt">// Weighted random selection — how it works:
@@ -1035,7 +1032,7 @@ console.<span class="fn">log</span>(<span class="str">'Merkle Root:'</span>, <sp
 //
 // Example: pick = 250 → 250 − 320 (Alice) = −70 ≤ 0 → Alice wins
 // Example: pick = 400 → 400 − 320 = 80 &gt; 0 → 80 − 160 (Bob) = −80 ≤ 0 → Bob wins</span>
-<span class="kw">function</span> <span class="fn">selectValidator</span>(validators) {
+<span class="kw">function</span> <span class="fn">selectValidator</span>(validators<span class="op">:</span> <span class="ty">Validator</span>[])<span class="op">:</span> <span class="ty">Validator</span> {
   <span class="cmt">// Sum all staked ETH → defines the total "number line" length</span>
   <span class="kw">const</span> totalStake = validators.<span class="fn">reduce</span>((sum, v) =&gt; sum + v.stake, <span class="num">0</span>);
 
@@ -1051,7 +1048,7 @@ console.<span class="fn">log</span>(<span class="str">'Merkle Root:'</span>, <sp
 <span class="cmt">// Simulates hashing the block header.
 // Real Ethereum hashes dozens of fields (parent hash, state root, timestamp…).
 // Here we just hash name + slot data to get a unique hex string per slot.</span>
-<span class="kw">function</span> <span class="fn">createBlockHash</span>(validatorName, data, slot) {
+<span class="kw">function</span> <span class="fn">createBlockHash</span>(validatorName<span class="op">:</span> <span class="ty">string</span>, data<span class="op">:</span> <span class="ty">string</span>, slot<span class="op">:</span> <span class="ty">number</span>)<span class="op">:</span> <span class="ty">string</span> {
   <span class="kw">return</span> crypto
     .<span class="fn">createHash</span>(<span class="str">'sha256'</span>)
     .<span class="fn">update</span>(validatorName + data + slot)
@@ -1061,7 +1058,7 @@ console.<span class="fn">log</span>(<span class="str">'Merkle Root:'</span>, <sp
 <span class="cmt">// Simulates one epoch: runs N slots and prints who proposed each block.
 // Real Ethereum epoch = 32 slots × 12 sec ≈ 6.4 minutes.
 // Win-share should roughly match stake-share over many epochs.</span>
-<span class="kw">function</span> <span class="fn">runEpoch</span>(validators, blocks = <span class="num">6</span>) {
+<span class="kw">function</span> <span class="fn">runEpoch</span>(validators<span class="op">:</span> <span class="ty">Validator</span>[], blocks<span class="op">:</span> <span class="ty">number</span> = <span class="num">6</span>)<span class="op">:</span> <span class="ty">void</span> {
   console.<span class="fn">log</span>(<span class="str">'=== Validators ==='</span>);
   validators.<span class="fn">forEach</span>(v =&gt; console.<span class="fn">log</span>(<span class="str">`  <span class="op">${</span>v.name<span class="op">}</span>: <span class="op">${</span>v.stake<span class="op">}</span> ETH staked`</span>));
   console.<span class="fn">log</span>(<span class="str">''</span>);
@@ -1090,7 +1087,7 @@ console.<span class="fn">log</span>(<span class="str">'Merkle Root:'</span>, <sp
 // or surround voting (contradictory attestations).
 // The burned ETH is removed from supply — not awarded to anyone.
 // This makes attacking the network economically irrational.</span>
-<span class="kw">function</span> <span class="fn">slash</span>(validator, percent = <span class="num">10</span>) {
+<span class="kw">function</span> <span class="fn">slash</span>(validator<span class="op">:</span> <span class="ty">Validator</span>, percent<span class="op">:</span> <span class="ty">number</span> = <span class="num">10</span>)<span class="op">:</span> <span class="ty">void</span> {
   <span class="kw">const</span> penalty = (validator.stake * percent) / <span class="num">100</span>;
   validator.stake -= penalty; <span class="cmt">// permanent — lowers future selection odds too</span>
   console.<span class="fn">log</span>(<span class="str">`\n[SLASH] <span class="op">${</span>validator.name<span class="op">}</span> penalized <span class="op">${</span>percent<span class="op">}</span>% — lost <span class="op">${</span>penalty<span class="op">}</span> ETH, remaining: <span class="op">${</span>validator.stake<span class="op">}</span> ETH`</span>);
@@ -1099,8 +1096,8 @@ console.<span class="fn">log</span>(<span class="str">'Merkle Root:'</span>, <sp
 <span class="cmt">// Total stake = 320 + 160 + 64 + 56 = 600 ETH
 // Expected selection share (stake / 600):
 //   Alice 53% · Bob 27% · Charlie 11% · Dave 9%</span>
-<span class="kw">const</span> validators = [
-  <span class="kw">new</span> <span class="fn">Validator</span>(<span class="str">'Alice'</span>,   <span class="num">320</span>),
+<span class="kw">const</span> validators<span class="op">:</span> <span class="ty">Validator</span>[] = [
+  <span class="kw">new</span> <span class="ty">Validator</span>(<span class="str">'Alice'</span>,   <span class="num">320</span>),
   <span class="kw">new</span> <span class="fn">Validator</span>(<span class="str">'Bob'</span>,     <span class="num">160</span>),
   <span class="kw">new</span> <span class="fn">Validator</span>(<span class="str">'Charlie'</span>,  <span class="num">64</span>),
   <span class="kw">new</span> <span class="fn">Validator</span>(<span class="str">'Dave'</span>,     <span class="num">56</span>),
@@ -1130,26 +1127,26 @@ console.<span class="fn">log</span>(<span class="str">'\nRunning next epoch afte
       <h2 class="section-title">05 — Build a Blockchain in Node.js</h2>
       <p>Now we put everything together into a working blockchain simulation. This is not a production implementation — it's a learning tool that demonstrates every concept we've covered: hashing, blocks, chaining, Merkle roots, Proof-of-Work, and chain validation.</p>
 
-      <h3>File: <code>blockchain-core.js</code></h3>
+      <h3>File: <code>blockchain-core.ts</code></h3>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">blockchain-core.js</span>
+          <span class="code-lang">blockchain-core.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+        <pre><code><span class="kw">import</span> { <span class="fn">createHash</span> } <span class="kw">from</span> <span class="str">'node:crypto'</span>;
 
 <span class="cmt">// ─────────────────────────────────────────────────────
 // Utility: SHA-256 hash
 // ─────────────────────────────────────────────────────</span>
-<span class="kw">function</span> <span class="fn">sha256</span>(data) {
-  <span class="kw">return</span> crypto.<span class="fn">createHash</span>(<span class="str">'sha256'</span>).<span class="fn">update</span>(data).<span class="fn">digest</span>(<span class="str">'hex'</span>);
+<span class="kw">function</span> <span class="fn">sha256</span>(data<span class="op">:</span> <span class="ty">string</span>)<span class="op">:</span> <span class="ty">string</span> {
+  <span class="kw">return</span> <span class="fn">createHash</span>(<span class="str">'sha256'</span>).<span class="fn">update</span>(data).<span class="fn">digest</span>(<span class="str">'hex'</span>);
 }
 
 <span class="cmt">// ─────────────────────────────────────────────────────
 // Merkle Root
 // ─────────────────────────────────────────────────────</span>
-<span class="kw">function</span> <span class="fn">merkleRoot</span>(txs) {
+<span class="kw">function</span> <span class="fn">merkleRoot</span>(txs<span class="op">:</span> <span class="ty">unknown</span>[])<span class="op">:</span> <span class="ty">string</span> {
   <span class="kw">if</span> (!txs.length) <span class="kw">return</span> <span class="fn">sha256</span>(<span class="str">''</span>);
   <span class="kw">let</span> layer = txs.<span class="fn">map</span>(t => <span class="fn">sha256</span>(JSON.<span class="fn">stringify</span>(t)));
   <span class="kw">while</span> (layer.length > <span class="num">1</span>) {
@@ -1164,7 +1161,9 @@ console.<span class="fn">log</span>(<span class="str">'\nRunning next epoch afte
 // Block
 // ─────────────────────────────────────────────────────</span>
 <span class="kw">class</span> <span class="ty">Block</span> {
-  <span class="fn">constructor</span>(index, transactions, previousHash = <span class="str">''</span>) {
+  index<span class="op">:</span> <span class="ty">number</span>; timestamp<span class="op">:</span> <span class="ty">string</span>; transactions<span class="op">:</span> <span class="ty">Transaction</span>[]; previousHash<span class="op">:</span> <span class="ty">string</span>;
+  merkleRoot<span class="op">:</span> <span class="ty">string</span>; nonce<span class="op">:</span> <span class="ty">number</span>; hash<span class="op">:</span> <span class="ty">string</span>;
+  <span class="fn">constructor</span>(index<span class="op">:</span> <span class="ty">number</span>, transactions<span class="op">:</span> <span class="ty">Transaction</span>[], previousHash<span class="op">:</span> <span class="ty">string</span> = <span class="str">''</span>) {
     <span class="kw">this</span>.index        = index;
     <span class="kw">this</span>.timestamp    = <span class="kw">new</span> <span class="ty">Date</span>().<span class="fn">toISOString</span>();
     <span class="kw">this</span>.transactions = transactions;
@@ -1185,7 +1184,7 @@ console.<span class="fn">log</span>(<span class="str">'\nRunning next epoch afte
     <span class="kw">return</span> <span class="fn">sha256</span>(content);
   }
 
-  <span class="fn">mine</span>(difficulty) {
+  <span class="fn">mine</span>(difficulty<span class="op">:</span> <span class="ty">number</span>)<span class="op">:</span> <span class="ty">void</span> {
     <span class="kw">const</span> target = <span class="str">'0'</span>.<span class="fn">repeat</span>(difficulty);
     <span class="kw">while</span> (!<span class="kw">this</span>.hash.<span class="fn">startsWith</span>(target)) {
       <span class="kw">this</span>.nonce++;
@@ -1199,19 +1198,16 @@ console.<span class="fn">log</span>(<span class="str">'\nRunning next epoch afte
 // Transaction
 // ─────────────────────────────────────────────────────</span>
 <span class="kw">class</span> <span class="ty">Transaction</span> {
-  <span class="fn">constructor</span>(from, to, amount) {
-    <span class="kw">this</span>.from      = from;
-    <span class="kw">this</span>.to        = to;
-    <span class="kw">this</span>.amount    = amount;
-    <span class="kw">this</span>.timestamp = Date.<span class="fn">now</span>();
-  }
+  timestamp<span class="op">:</span> <span class="ty">number</span> = Date.<span class="fn">now</span>();
+  <span class="fn">constructor</span>(<span class="kw">public</span> from<span class="op">:</span> <span class="ty">string</span>, <span class="kw">public</span> to<span class="op">:</span> <span class="ty">string</span>, <span class="kw">public</span> amount<span class="op">:</span> <span class="ty">number</span>) {}
 }
 
 <span class="cmt">// ─────────────────────────────────────────────────────
 // Blockchain
 // ─────────────────────────────────────────────────────</span>
 <span class="kw">class</span> <span class="ty">Blockchain</span> {
-  <span class="fn">constructor</span>(difficulty = <span class="num">3</span>) {
+  difficulty<span class="op">:</span> <span class="ty">number</span>; pending<span class="op">:</span> <span class="ty">Transaction</span>[]; chain<span class="op">:</span> <span class="ty">Block</span>[];
+  <span class="fn">constructor</span>(difficulty<span class="op">:</span> <span class="ty">number</span> = <span class="num">3</span>) {
     <span class="kw">this</span>.difficulty = difficulty;
     <span class="kw">this</span>.pending    = [];          <span class="cmt">// mempool</span>
     <span class="kw">this</span>.chain      = [<span class="kw">this</span>.<span class="fn">createGenesis</span>()];
@@ -1223,7 +1219,7 @@ console.<span class="fn">log</span>(<span class="str">'\nRunning next epoch afte
     <span class="kw">return</span> genesis;
   }
 
-  <span class="fn">addTransaction</span>(tx) {
+  <span class="fn">addTransaction</span>(tx<span class="op">:</span> <span class="ty">Transaction</span>)<span class="op">:</span> <span class="ty">void</span> {
     <span class="kw">if</span> (!tx.from || !tx.to || tx.amount <= <span class="num">0</span>) <span class="kw">throw new</span> <span class="ty">Error</span>(<span class="str">'Invalid transaction'</span>);
     <span class="kw">this</span>.pending.<span class="fn">push</span>(tx);
     console.<span class="fn">log</span>(<span class="str">`  + Pending tx: <span class="op">${</span>tx.from<span class="op">}</span> → <span class="op">${</span>tx.to<span class="op">}</span> (<span class="op">${</span>tx.amount<span class="op">}</span>)`</span>);
@@ -1237,7 +1233,7 @@ console.<span class="fn">log</span>(<span class="str">'\nRunning next epoch afte
     <span class="kw">this</span>.pending = [];
   }
 
-  <span class="fn">getBalance</span>(address) {
+  <span class="fn">getBalance</span>(address<span class="op">:</span> <span class="ty">string</span>)<span class="op">:</span> <span class="ty">number</span> {
     <span class="kw">let</span> balance = <span class="num">0</span>;
     <span class="kw">for</span> (<span class="kw">const</span> block <span class="kw">of</span> <span class="kw">this</span>.chain) {
       <span class="kw">for</span> (<span class="kw">const</span> tx <span class="kw">of</span> block.transactions) {
@@ -1248,7 +1244,7 @@ console.<span class="fn">log</span>(<span class="str">'\nRunning next epoch afte
     <span class="kw">return</span> balance;
   }
 
-  <span class="fn">isValid</span>() {
+  <span class="fn">isValid</span>()<span class="op">:</span> <span class="ty">boolean</span> {
     <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">1</span>; i < <span class="kw">this</span>.chain.length; i++) {
       <span class="kw">const</span> cur  = <span class="kw">this</span>.chain[i];
       <span class="kw">const</span> prev = <span class="kw">this</span>.chain[i - <span class="num">1</span>];
@@ -1260,7 +1256,7 @@ console.<span class="fn">log</span>(<span class="str">'\nRunning next epoch afte
 }
 
 <span class="cmt">// ─────────────────────────────────────────────────────
-// Demo — run with: node blockchain-core.js
+// Demo — run with: npx ts-node blockchain-core.ts
 // ─────────────────────────────────────────────────────</span>
 <span class="kw">const</span> bc = <span class="kw">new</span> <span class="ty">Blockchain</span>(<span class="num">3</span>);
 
@@ -1293,7 +1289,7 @@ console.<span class="fn">log</span>(<span class="str">'After tampering:'</span>,
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
           <span class="terminal-title">terminal</span>
         </div>
-        <pre><span class="prompt">$ </span><span class="cmd">node blockchain-core.js</span>
+        <pre><span class="prompt">$ </span><span class="cmd">npx ts-node blockchain-core.ts</span>
 
 <span class="out">=== Adding transactions to mempool ===
   + Pending tx: Alice → Bob (50)
@@ -1453,10 +1449,10 @@ After tampering: false</span></pre>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">wallet.js</span>
+          <span class="code-lang">wallet.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+        <pre><code><span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'ethers'</span>;
 
 <span class="cmt">// ── 1. Generate a brand-new random wallet ──────────────</span>
 <span class="kw">const</span> wallet = ethers.Wallet.<span class="fn">createRandom</span>();
@@ -1512,10 +1508,10 @@ console.<span class="fn">log</span>(<span class="str">'From mnemonic:'</span>, f
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">hd-wallet.js</span>
+          <span class="code-lang">hd-wallet.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
+        <pre><code><span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'ethers'</span>;
 
 <span class="kw">const</span> mnemonic = <span class="str">'test test test test test test test test test test test junk'</span>;
 <span class="kw">const</span> hdNode   = ethers.HDNodeWallet.<span class="fn">fromPhrase</span>(mnemonic);
@@ -1606,11 +1602,11 @@ console.<span class="fn">log</span>(<span class="str">'From mnemonic:'</span>, f
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">send-eth.js</span>
+          <span class="code-lang">send-eth.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
-<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+        <pre><code><span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'ethers'</span>;
+<span class="kw">import</span> <span class="str">'dotenv/config'</span>;
 
 <span class="kw">async function</span> <span class="fn">main</span>() {
   <span class="cmt">// Connect to local Hardhat node (start with: npx hardhat node)</span>
@@ -1683,7 +1679,7 @@ Account #1: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 (10000 ETH)
 ...</span>
 
 <span class="comment"># Tab 2: run the script</span>
-<span class="prompt">$ </span><span class="cmd">node send-eth.js</span>
+<span class="prompt">$ </span><span class="cmd">npx ts-node send-eth.ts</span>
 <span class="out">Sender before : 10000.0 ETH
 Gas estimate  : 21000
 
@@ -1728,8 +1724,8 @@ Sender after  : 8999.999999999979 ETH</span></pre>
 <span class="prompt">$ </span><span class="cmd">mkdir blockchain-dev && cd blockchain-dev</span>
 <span class="prompt">$ </span><span class="cmd">npm init -y</span>
 
-<span class="comment"># Core dev dependencies</span>
-<span class="prompt">$ </span><span class="cmd">npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox</span>
+<span class="comment"># Core dev dependencies (Hardhat 3 + TypeScript)</span>
+<span class="prompt">$ </span><span class="cmd">npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox-mocha-ethers typescript ts-node @types/node</span>
 
 <span class="comment"># Runtime dependencies</span>
 <span class="prompt">$ </span><span class="cmd">npm install ethers dotenv</span>
@@ -1737,34 +1733,36 @@ Sender after  : 8999.999999999979 ETH</span></pre>
 <span class="comment"># OpenZeppelin — battle-tested base contracts</span>
 <span class="prompt">$ </span><span class="cmd">npm install @openzeppelin/contracts</span>
 
-<span class="comment"># Initialize Hardhat — select "Create a JavaScript project"</span>
+<span class="comment"># Initialize Hardhat — select "Create a TypeScript project"</span>
 <span class="prompt">$ </span><span class="cmd">npx hardhat init</span>
-<span class="out">✔ What do you want to do? · Create a JavaScript project
+<span class="out">✔ What do you want to do? · Create a TypeScript project
 ✔ Hardhat project root: · /blockchain-dev
 ✔ Do you want to add a .gitignore? · yes
 ✔ Do you want to install the sample project's dependencies? · yes</span></pre>
       </div>
 
       <h3>Step 2 — Configure Hardhat</h3>
-      <p>Replace the generated <code>hardhat.config.js</code> with this full configuration supporting local, Sepolia, and mainnet networks.</p>
+      <p>Replace the generated <code>hardhat.config.ts</code> with this full Hardhat 3 TypeScript configuration supporting local, Sepolia, and mainnet networks.</p>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">hardhat.config.js</span>
+          <span class="code-lang">hardhat.config.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="fn">require</span>(<span class="str">'@nomicfoundation/hardhat-toolbox'</span>);
-<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+        <pre><code><span class="kw">import</span> <span class="str">'dotenv/config'</span>;
+<span class="kw">import</span> toolbox <span class="kw">from</span> <span class="str">'@nomicfoundation/hardhat-toolbox-mocha-ethers'</span>;
+<span class="kw">import type</span> { <span class="ty">HardhatUserConfig</span> } <span class="kw">from</span> <span class="str">'hardhat/config'</span>;
 
-<span class="cmt">// Safely read env vars — fallback to empty string so config loads without them</span>
-<span class="kw">const</span> PRIVATE_KEY      = process.env.PRIVATE_KEY      || <span class="str">'0x'</span> + <span class="str">'0'</span>.<span class="fn">repeat</span>(<span class="num">64</span>);
-<span class="kw">const</span> SEPOLIA_RPC_URL  = process.env.SEPOLIA_RPC_URL  || <span class="str">''</span>;
-<span class="kw">const</span> ETHERSCAN_KEY    = process.env.ETHERSCAN_API_KEY || <span class="str">''</span>;
+<span class="cmt">// Safely read env vars — Sepolia network only added when both are present</span>
+<span class="kw">const</span> PRIVATE_KEY     = process.env.PRIVATE_KEY;
+<span class="kw">const</span> SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL  || <span class="str">''</span>;
+<span class="kw">const</span> ETHERSCAN_KEY   = process.env.ETHERSCAN_API_KEY || <span class="str">''</span>;
 
-<span class="op">/** @type import('hardhat/config').HardhatUserConfig */</span>
-module.exports = {
+<span class="kw">const</span> config<span class="op">:</span> <span class="ty">HardhatUserConfig</span> = {
+  <span class="key">plugins</span>: [toolbox],
+
   <span class="key">solidity</span>: {
-    <span class="key">version</span>: <span class="str">'0.8.20'</span>,
+    <span class="key">version</span>: <span class="str">'0.8.28'</span>,
     <span class="key">settings</span>: {
       <span class="key">optimizer</span>: {
         <span class="key">enabled</span>: <span class="kw">true</span>,
@@ -1776,30 +1774,31 @@ module.exports = {
   <span class="key">networks</span>: {
     <span class="cmt">// Local Hardhat node — instant mining, 20 pre-funded accounts</span>
     <span class="key">hardhat</span>: {
+      <span class="key">type</span>:    <span class="str">'edr-simulated'</span>,
       <span class="key">chainId</span>: <span class="num">31337</span>,
     },
     <span class="key">localhost</span>: {
-      <span class="key">url</span>: <span class="str">'http://127.0.0.1:8545'</span>,
+      <span class="key">type</span>: <span class="str">'http'</span>,
+      <span class="key">url</span>:  <span class="str">'http://127.0.0.1:8545'</span>,
     },
-    <span class="cmt">// Sepolia testnet</span>
-    <span class="key">sepolia</span>: {
-      <span class="key">url</span>:      SEPOLIA_RPC_URL,
-      <span class="key">accounts</span>: [PRIVATE_KEY],
-      <span class="key">chainId</span>:  <span class="num">11155111</span>,
-    },
+    <span class="cmt">// Sepolia testnet (only added when env vars are set)</span>
+    ...(PRIVATE_KEY && SEPOLIA_RPC_URL ? {
+      <span class="key">sepolia</span>: {
+        <span class="key">type</span>:     <span class="str">'http'</span> <span class="kw">as const</span>,
+        <span class="key">url</span>:      SEPOLIA_RPC_URL,
+        <span class="key">accounts</span>: [PRIVATE_KEY],
+        <span class="key">chainId</span>:  <span class="num">11155111</span>,
+      },
+    } : {}),
   },
 
   <span class="cmt">// Etherscan contract verification</span>
-  <span class="key">etherscan</span>: {
-    <span class="key">apiKey</span>: ETHERSCAN_KEY,
+  <span class="key">verify</span>: {
+    <span class="key">etherscan</span>: { <span class="key">apiKey</span>: ETHERSCAN_KEY },
   },
+};
 
-  <span class="cmt">// Gas reporter — shows gas cost per function after tests</span>
-  <span class="key">gasReporter</span>: {
-    <span class="key">enabled</span>:  <span class="kw">true</span>,
-    <span class="key">currency</span>: <span class="str">'USD'</span>,
-  },
-};</code></pre>
+<span class="kw">export default</span> config;</code></pre>
       </div>
 
       <h3>Step 3 — Environment variables</h3>
@@ -1834,8 +1833,8 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
     <span class="key">"test:gas"</span>:        <span class="str">"REPORT_GAS=true hardhat test"</span>,
     <span class="key">"coverage"</span>:        <span class="str">"hardhat coverage"</span>,
     <span class="key">"node"</span>:            <span class="str">"hardhat node"</span>,
-    <span class="key">"deploy:local"</span>:    <span class="str">"hardhat run scripts/deploy.js --network localhost"</span>,
-    <span class="key">"deploy:sepolia"</span>:  <span class="str">"hardhat run scripts/deploy.js --network sepolia"</span>,
+    <span class="key">"deploy:local"</span>:    <span class="str">"hardhat run scripts/deploy.ts --network localhost"</span>,
+    <span class="key">"deploy:sepolia"</span>:  <span class="str">"hardhat run scripts/deploy.ts --network sepolia"</span>,
     <span class="key">"verify"</span>:          <span class="str">"hardhat verify --network sepolia"</span>,
     <span class="key">"console"</span>:         <span class="str">"hardhat console --network localhost"</span>
   }
@@ -1855,7 +1854,7 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
 <span class="prompt">$ </span><span class="cmd">npx hardhat test</span>
 
 <span class="comment"># Run a specific test file</span>
-<span class="prompt">$ </span><span class="cmd">npx hardhat test test/Token.test.js</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat test test/Token.test.ts</span>
 
 <span class="comment"># Start local blockchain node (keep running in background)</span>
 <span class="prompt">$ </span><span class="cmd">npx hardhat node</span>
@@ -1902,12 +1901,12 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
 │       └── IToken.sol
 │
 ├── scripts/                    <span class="cmt">← Deployment &amp; utility scripts</span>
-│   ├── deploy.js
-│   └── interact.js
+│   ├── deploy.ts
+│   └── interact.ts
 │
 ├── test/                       <span class="cmt">← Mocha/Chai test files</span>
-│   ├── Token.test.js
-│   └── Voting.test.js
+│   ├── Token.test.ts
+│   └── Voting.test.ts
 │
 ├── artifacts/                  <span class="cmt">← Auto-generated: ABI + bytecode (gitignored)</span>
 │   └── contracts/
@@ -1918,7 +1917,7 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
 │
 ├── .env                        <span class="cmt">← Secrets (gitignored!)</span>
 ├── .gitignore
-├── hardhat.config.js           <span class="cmt">← Networks, compiler, plugins</span>
+├── hardhat.config.ts           <span class="cmt">← Networks, compiler, plugins</span>
 └── package.json</code></pre>
       </div>
 
@@ -1961,10 +1960,12 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">scripts/interact.js</span>
+          <span class="code-lang">scripts/interact.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'hardhat'</span>);   <span class="cmt">// ← import from hardhat, not ethers directly</span>
+        <pre><code><span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'hardhat'</span>;   <span class="cmt">// ← import from hardhat, not ethers directly</span>
+<span class="cmt">// Top-level import for JSON artifact (TypeScript resolveJsonModule)</span>
+<span class="kw">import</span> artifact <span class="kw">from</span> <span class="str">'./artifacts/contracts/Token.sol/Token.json'</span>;
 
 <span class="kw">async function</span> <span class="fn">main</span>() {
   <span class="cmt">// getContractFactory auto-loads ABI + bytecode from artifacts/</span>
@@ -1973,8 +1974,7 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
   <span class="cmt">// Attach to an already-deployed contract at a known address</span>
   <span class="kw">const</span> token = Token.<span class="fn">attach</span>(<span class="str">'0xDeployedContractAddress'</span>);
 
-  <span class="cmt">// Or load ABI manually (useful in standalone scripts)</span>
-  <span class="kw">const</span> artifact = <span class="fn">require</span>(<span class="str">'./artifacts/contracts/Token.sol/Token.json'</span>);
+  <span class="cmt">// Or instantiate directly with ABI (useful in standalone scripts)</span>
   <span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(<span class="str">'http://127.0.0.1:8545'</span>);
   <span class="kw">const</span> contract = <span class="kw">new</span> ethers.<span class="ty">Contract</span>(<span class="str">'0xAddress'</span>, artifact.abi, provider);
 
@@ -1987,7 +1987,7 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
       <div class="callout info">
         <div class="callout-icon">&#9432;</div>
         <div class="callout-body">
-          <strong>Always import ethers from hardhat</strong> in scripts and tests: <code>require('hardhat')</code>, not <code>require('ethers')</code> directly. Hardhat's version is pre-configured with your network settings, signers, and contract factories.
+          <strong>Always import ethers from hardhat</strong> in scripts and tests: <code>import { ethers } from 'hardhat'</code>, not <code>import { ethers } from 'ethers'</code> directly. Hardhat's version is pre-configured with your network settings, signers, and contract factories.
         </div>
       </div>
     </section>
@@ -2820,11 +2820,11 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">scripts/provider.js</span>
+          <span class="code-lang">scripts/provider.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
-<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+        <pre><code><span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'ethers'</span>;
+<span class="kw">import</span> <span class="str">'dotenv/config'</span>;
 
 <span class="cmt">// Read-only connection via Alchemy / Infura RPC URL</span>
 <span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(process.env.SEPOLIA_RPC_URL);
@@ -2862,11 +2862,11 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">scripts/interact.js</span>
+          <span class="code-lang">scripts/interact.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
-<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+        <pre><code><span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'ethers'</span>;
+<span class="kw">import</span> <span class="str">'dotenv/config'</span>;
 
 <span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(process.env.SEPOLIA_RPC_URL);
 <span class="kw">const</span> signer   = <span class="kw">new</span> ethers.<span class="fn">Wallet</span>(process.env.PRIVATE_KEY, provider);
@@ -2916,11 +2916,11 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">scripts/events.js</span>
+          <span class="code-lang">scripts/events.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'ethers'</span>);
-<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+        <pre><code><span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'ethers'</span>;
+<span class="kw">import</span> <span class="str">'dotenv/config'</span>;
 
 <span class="kw">const</span> provider = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(process.env.SEPOLIA_RPC_URL);
 <span class="kw">const</span> signer   = <span class="kw">new</span> ethers.<span class="fn">Wallet</span>(process.env.PRIVATE_KEY, provider);
@@ -2989,19 +2989,21 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">test/Counter.test.js</span>
+          <span class="code-lang">test/Counter.test.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { expect } = <span class="fn">require</span>(<span class="str">'chai'</span>);
-<span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'hardhat'</span>);
+        <pre><code><span class="kw">import</span> { expect } <span class="kw">from</span> <span class="str">'chai'</span>;
+<span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'hardhat'</span>;
 
 <span class="fn">describe</span>(<span class="str">'Counter'</span>, <span class="kw">function</span> () {
-    <span class="kw">let</span> counter, owner, alice;
+    <span class="kw">let</span> counter<span class="op">:</span> <span class="ty">Awaited</span>&lt;<span class="ty">ReturnType</span>&lt;<span class="ty">typeof</span> Counter.<span class="fn">deploy</span>&gt;&gt;;
+    <span class="kw">let</span> owner<span class="op">:</span> <span class="ty">Awaited</span>&lt;<span class="ty">ReturnType</span>&lt;<span class="kw">typeof</span> ethers.<span class="fn">getSigner</span>&gt;&gt;, alice<span class="op">:</span> <span class="ty">typeof</span> owner;
+    <span class="kw">let</span> Counter<span class="op">:</span> <span class="ty">Awaited</span>&lt;<span class="ty">ReturnType</span>&lt;<span class="kw">typeof</span> ethers.<span class="fn">getContractFactory</span>&gt;&gt;;
 
     <span class="fn">beforeEach</span>(<span class="kw">async function</span> () {
         [owner, alice] = <span class="kw">await</span> ethers.<span class="fn">getSigners</span>();
-        <span class="kw">const</span> Counter  = <span class="kw">await</span> ethers.<span class="fn">getContractFactory</span>(<span class="str">'Counter'</span>);
-        counter        = <span class="kw">await</span> Counter.<span class="fn">deploy</span>();
+        Counter  = <span class="kw">await</span> ethers.<span class="fn">getContractFactory</span>(<span class="str">'Counter'</span>);
+        counter  = <span class="kw">await</span> Counter.<span class="fn">deploy</span>();
     });
 
     <span class="fn">describe</span>(<span class="str">'increment'</span>, <span class="kw">function</span> () {
@@ -3048,11 +3050,11 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">test/SimpleBank.test.js — ETH value + event assertions</span>
+          <span class="code-lang">test/SimpleBank.test.ts — ETH value + event assertions</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { expect } = <span class="fn">require</span>(<span class="str">'chai'</span>);
-<span class="kw">const</span> { ethers } = <span class="fn">require</span>(<span class="str">'hardhat'</span>);
+        <pre><code><span class="kw">import</span> { expect } <span class="kw">from</span> <span class="str">'chai'</span>;
+<span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'hardhat'</span>;
 
 <span class="fn">describe</span>(<span class="str">'SimpleBank'</span>, <span class="kw">function</span> () {
     <span class="kw">let</span> bank, owner, alice;
@@ -3097,41 +3099,49 @@ ETHERSCAN_API_KEY=YOUR_ETHERSCAN_KEY</code></pre>
       <h2 class="section-title">24 — Deploy to Testnet</h2>
       <p>Hardhat <strong>Ignition</strong> is the modern deployment system — declarative modules that track deployment state per network. Each contract is deployed once; re-running the same module on the same network is a no-op unless you explicitly force it.</p>
 
-      <h3>1. Update hardhat.config.js</h3>
+      <h3>1. Update <code>hardhat.config.ts</code></h3>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">hardhat.config.js</span>
+          <span class="code-lang">hardhat.config.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="fn">require</span>(<span class="str">'@nomicfoundation/hardhat-toolbox'</span>);
-<span class="fn">require</span>(<span class="str">'dotenv'</span>).<span class="fn">config</span>();
+        <pre><code><span class="kw">import</span> <span class="str">'dotenv/config'</span>;
+<span class="kw">import</span> toolbox <span class="kw">from</span> <span class="str">'@nomicfoundation/hardhat-toolbox-mocha-ethers'</span>;
+<span class="kw">import type</span> { <span class="ty">HardhatUserConfig</span> } <span class="kw">from</span> <span class="str">'hardhat/config'</span>;
 
-module.exports = {
-    solidity: <span class="str">'0.8.20'</span>,
+<span class="kw">const</span> config<span class="op">:</span> <span class="ty">HardhatUserConfig</span> = {
+    plugins: [toolbox],
+    solidity: <span class="str">'0.8.28'</span>,
     networks: {
-        hardhat: {},
-        sepolia: {
-            url:      process.env.SEPOLIA_RPC_URL,
-            accounts: [process.env.PRIVATE_KEY],
-        },
+        hardhat: { type: <span class="str">'edr-simulated'</span>, chainId: <span class="num">31337</span> },
+        ...(process.env.PRIVATE_KEY && process.env.SEPOLIA_RPC_URL ? {
+            sepolia: {
+                type:     <span class="str">'http'</span> <span class="kw">as const</span>,
+                url:      process.env.SEPOLIA_RPC_URL,
+                accounts: [process.env.PRIVATE_KEY],
+                chainId:  <span class="num">11155111</span>,
+            },
+        } : {}),
     },
-    etherscan: {
-        apiKey: process.env.ETHERSCAN_API_KEY,
+    verify: {
+        etherscan: { apiKey: process.env.ETHERSCAN_API_KEY || <span class="str">''</span> },
     },
-};</code></pre>
+};
+
+<span class="kw">export default</span> config;</code></pre>
       </div>
 
       <h3>2. Write an Ignition module</h3>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span class="code-dot dot-r"></span><span class="code-dot dot-y"></span><span class="code-dot dot-g"></span></div>
-          <span class="code-lang">ignition/modules/Counter.js</span>
+          <span class="code-lang">ignition/modules/Counter.ts</span>
           <button class="copy-btn" onclick="copyCode(this)">copy</button>
         </div>
-        <pre><code><span class="kw">const</span> { buildModule } = <span class="fn">require</span>(<span class="str">'@nomicfoundation/hardhat-ignition/modules'</span>);
+        <pre><code><span class="kw">import</span> { buildModule } <span class="kw">from</span> <span class="str">'@nomicfoundation/hardhat-ignition/modules'</span>;
 
-module.exports = <span class="fn">buildModule</span>(<span class="str">'CounterModule'</span>, (m) =&gt; {
+<span class="kw">export default</span> <span class="fn">buildModule</span>(<span class="str">'CounterModule'</span>, (m) =&gt; {
     <span class="kw">const</span> counter = m.<span class="fn">contract</span>(<span class="str">'Counter'</span>);
     <span class="kw">return</span> { counter };
 });</code></pre>
@@ -3150,10 +3160,10 @@ module.exports = <span class="fn">buildModule</span>(<span class="str">'CounterM
 <span class="prompt">$ </span><span class="cmd">npx hardhat test</span>
 
 <span class="comment"># Deploy to local Hardhat node (no real ETH needed)</span>
-<span class="prompt">$ </span><span class="cmd">npx hardhat ignition deploy ignition/modules/Counter.js</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat ignition deploy ignition/modules/Counter.ts</span>
 
 <span class="comment"># Deploy to Sepolia testnet (requires .env with SEPOLIA_RPC_URL + PRIVATE_KEY)</span>
-<span class="prompt">$ </span><span class="cmd">npx hardhat ignition deploy ignition/modules/Counter.js --network sepolia</span>
+<span class="prompt">$ </span><span class="cmd">npx hardhat ignition deploy ignition/modules/Counter.ts --network sepolia</span>
 
 <span class="comment"># Verify source code on Etherscan so anyone can read it</span>
 <span class="prompt">$ </span><span class="cmd">npx hardhat verify --network sepolia 0xYourDeployedContractAddress</span></pre>
