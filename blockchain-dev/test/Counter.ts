@@ -4,33 +4,63 @@ import { network } from "hardhat";
 const { ethers } = await network.create();
 
 describe("Counter", function () {
-  it("Should emit the Increment event when calling the inc() function", async function () {
+  it("starts at zero", async function () {
     const counter = await ethers.deployContract("Counter");
-
-    await expect(counter.inc()).to.emit(counter, "Increment").withArgs(1n);
+    expect(await counter.count()).to.equal(0n);
   });
 
-  it("The sum of the Increment events should match the current value", async function () {
+  it("increment increases count by 1", async function () {
     const counter = await ethers.deployContract("Counter");
-    const deploymentBlockNumber = await ethers.provider.getBlockNumber();
+    await counter.increment();
+    expect(await counter.count()).to.equal(1n);
+  });
 
-    // run a series of increments
-    for (let i = 1; i <= 10; i++) {
-      await counter.incBy(i);
-    }
+  it("increment can be called multiple times", async function () {
+    const counter = await ethers.deployContract("Counter");
+    await counter.increment();
+    await counter.increment();
+    await counter.increment();
+    expect(await counter.count()).to.equal(3n);
+  });
 
-    const events = await counter.queryFilter(
-      counter.filters.Increment(),
-      deploymentBlockNumber,
-      "latest",
-    );
+  it("decrement reduces count by 1", async function () {
+    const counter = await ethers.deployContract("Counter");
+    await counter.increment();
+    await counter.decrement();
+    expect(await counter.count()).to.equal(0n);
+  });
 
-    // check that the aggregated events match the current value
-    let total = 0n;
-    for (const event of events) {
-      total += event.args.by;
-    }
+  it("decrement reverts when count is already zero", async function () {
+    const counter = await ethers.deployContract("Counter");
+    await expect(counter.decrement()).to.be.revertedWith("Counter: already zero");
+  });
 
-    expect(await counter.x()).to.equal(total);
+  it("reset sets count to zero", async function () {
+    const counter = await ethers.deployContract("Counter");
+    await counter.increment();
+    await counter.increment();
+    await counter.reset();
+    expect(await counter.count()).to.equal(0n);
+  });
+
+  it("emits Incremented event", async function () {
+    const counter = await ethers.deployContract("Counter");
+    await expect(counter.increment())
+      .to.emit(counter, "Incremented")
+      .withArgs(1n);
+  });
+
+  it("emits Decremented event", async function () {
+    const counter = await ethers.deployContract("Counter");
+    await counter.increment();
+    await expect(counter.decrement())
+      .to.emit(counter, "Decremented")
+      .withArgs(0n);
+  });
+
+  it("getCount returns same value as count()", async function () {
+    const counter = await ethers.deployContract("Counter");
+    await counter.increment();
+    expect(await counter.getCount()).to.equal(await counter.count());
   });
 });

@@ -13,5 +13,9 @@
   "dependencies": {
     "crypto": "^1.0.1",
     "ethers": "^6.16.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^7.0.0",
+    "hardhat": "^3.5.1"
   }
 }
